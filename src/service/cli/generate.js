@@ -52,8 +52,8 @@ module.exports = {
       } catch (e) {
         console.error(chalk.red(`Can't write data to file...${e.message}`));
       }
-
-      return console.info(chalk.green(`Operation success. File created.`));
     }
+
+    return console.info(chalk.green(`Operation success. File created.`));
   }
 };

@@ -16,4 +16,4 @@ module.exports = {
   run() {
     console.info(chalk.gray(welcomeMessage));
   }
-}
+};
