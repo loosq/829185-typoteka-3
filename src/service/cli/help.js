@@ -1,5 +1,7 @@
 'use strict';
 
+const chalk = require(`chalk`);
+
 const welcomeMessage = `Программа запускает http-сервер и формирует файл с данными для API.
 
     Гайд:
@@ -12,6 +14,6 @@ const welcomeMessage = `Программа запускает http-сервер 
 module.exports = {
   name: `--help`,
   run() {
-    console.info(welcomeMessage);
+    console.info(chalk.gray(welcomeMessage));
   }
 }

@@ -14,8 +14,8 @@ const {
   getRandomDateFromPast
 } = require(`../utils`);
 
-const fs = require(`fs`);
-
+const {writeFile} = require(`fs/promises`);
+const chalk = require(`chalk`);
 const MOCKS_RESTRICTIONS = {
   MIN: 1,
   MAX: 1000
@@ -37,23 +37,23 @@ const generateOffers = (count) => (
 
 module.exports = {
   name: `--generate`,
-  run(args) {
+  async run(args) {
 
     const [count] = args;
     const countPosts = Number.parseInt(count, 10) || DEFAULT_COUNT;
 
     if (countPosts > MOCKS_RESTRICTIONS.MAX) {
-      console.info(`Не больше ${MOCKS_RESTRICTIONS.MAX} ${correctNounEnding(MOCKS_RESTRICTIONS.MAX, [`пост`, `поста`, `постов`])}`);
+      console.info(chalk.red(`Не больше ${MOCKS_RESTRICTIONS.MAX} ${correctNounEnding(MOCKS_RESTRICTIONS.MAX, [`пост`, `поста`, `постов`])}`));
     } else {
       const content = JSON.stringify(generateOffers(countPosts));
 
-      fs.writeFile(FILE_NAME, content, (err) => {
-        if (err) {
-          return console.error(`Can't write data to file...`);
-        }
+      try {
+        await writeFile(FILE_NAME, content);
+      } catch (e) {
+        console.error(chalk.red(`Can't write data to file...${e.message}`));
+      }
 
-        return console.info(`Operation success. File created.`);
-      });
+      return console.info(chalk.green(`Operation success. File created.`));
     }
   }
 };
