@@ -34,7 +34,7 @@ const correctNounEnding = (number, titles) => {
 
 const getRandomDateFromPast = (dateShift) => {
   const currentDate = new Date();
-  const millisecondsInOneDay = 60*60*24*1000;
+  const millisecondsInOneDay = 60 * 60 * 24 * 1000;
   const shift = getRandomInt(0, dateShift);
   const result = new Date(currentDate.getTime() - (millisecondsInOneDay * shift));
 
