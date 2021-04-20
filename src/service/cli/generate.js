@@ -2,9 +2,10 @@
 
 const {
   DEFAULT_COUNT,
-  TITLES,
-  TEXTS,
-  CATEGORIES
+  FILE_NAME,
+  MAXIMUM_SENTENCES_ALLOWED,
+  DATE_SHIFT,
+  MOCKS_RESTRICTIONS
 } = require(`../mocks`);
 
 const {
@@ -14,24 +15,29 @@ const {
   getRandomDateFromPast
 } = require(`../utils`);
 
-const {writeFile} = require(`fs/promises`);
+const {writeFile, readFile} = require(`fs/promises`);
 const chalk = require(`chalk`);
-const MOCKS_RESTRICTIONS = {
-  MIN: 1,
-  MAX: 1000
+const titlesPath = `./data/titles.txt`;
+const categoriesPath = `./data/categories.txt`;
+const sentencesPath = `./data/sentences.txt`;
+
+const readContent = async (filePath) => {
+  try {
+    const content = await readFile(filePath, `utf8`);
+    return content.split(`\n`).filter((line) => line.trim().length > 0);
+  } catch (err) {
+    console.error(chalk.red(err));
+    return [];
+  }
 };
 
-const FILE_NAME = `mocks.json`;
-const maximumSentencesAllowed = 5;
-const dateShift = 90;
-
-const generateOffers = (count) => (
+const generateOffers = (count, titles, categories, sentences) => (
   Array(count).fill({}).map(() => ({
-    title: TITLES[getRandomInt(0, TITLES.length - 1)],
-    createdDate: getRandomDateFromPast(dateShift),
-    announce: shuffle(TEXTS).slice(1, maximumSentencesAllowed).join(` `),
-    fullText: shuffle(TEXTS).slice(1, TEXTS.length).join(` `),
-    category: [CATEGORIES[getRandomInt(0, CATEGORIES.length - 1)]]
+    title: titles[getRandomInt(0, titles.length - 1)],
+    createdDate: getRandomDateFromPast(DATE_SHIFT),
+    announce: shuffle(sentences).slice(1, MAXIMUM_SENTENCES_ALLOWED).join(` `),
+    fullText: shuffle(sentences).slice(1, sentences.length).join(` `),
+    category: [categories[getRandomInt(0, categories.length - 1)]]
   }))
 );
 
@@ -41,19 +47,21 @@ module.exports = {
 
     const [count] = args;
     const countPosts = Number.parseInt(count, 10) || DEFAULT_COUNT;
+    const titles = await readContent(titlesPath);
+    const categories = await readContent(categoriesPath);
+    const sentences = await readContent(sentencesPath);
 
     if (countPosts > MOCKS_RESTRICTIONS.MAX) {
-      console.info(chalk.red(`Не больше ${MOCKS_RESTRICTIONS.MAX} ${correctNounEnding(MOCKS_RESTRICTIONS.MAX, [`пост`, `поста`, `постов`])}`));
+      return console.info(chalk.red(`Не больше ${MOCKS_RESTRICTIONS.MAX} ${correctNounEnding(MOCKS_RESTRICTIONS.MAX, [`пост`, `поста`, `постов`])}`));
     } else {
-      const content = JSON.stringify(generateOffers(countPosts));
+      const content = JSON.stringify(generateOffers(countPosts, titles, categories, sentences));
 
       try {
         await writeFile(FILE_NAME, content);
+        return console.info(chalk.green(`Operation success. File created.`));
       } catch (e) {
-        console.error(chalk.red(`Can't write data to file...${e.message}`));
+        return console.error(chalk.red(`Can't write data to file...${e.message}`));
       }
     }
-
-    return console.info(chalk.green(`Operation success. File created.`));
   }
 };
