@@ -42,13 +42,11 @@ const generateOffers = (options) => {
     announce: shuffle(sentences).slice(1, MAXIMUM_SENTENCES_ALLOWED).join(` `),
     fullText: shuffle(sentences).slice(1, sentences.length).join(` `),
     category: [categories[getRandomInt(0, categories.length - 1)]],
-    comments: Array(getRandomInt(1, MAXIMUM_COMMENTS)).fill({}).map(() => {
-      return {
-        id: nanoid(),
-        text: shuffle(comments).slice(1, sentences.length).join(` `)
-      }
-    })
-  }))
+    comments: Array(getRandomInt(1, MAXIMUM_COMMENTS)).fill({}).map(() => ({
+      id: nanoid(),
+      text: shuffle(comments).slice(1, sentences.length).join(` `)
+    }))
+  }));
 };
 
 module.exports = {
@@ -62,11 +60,12 @@ module.exports = {
       return console.info(chalk.red(`Не больше ${MOCKS_RESTRICTIONS.MAX} ${correctNounEnding(MOCKS_RESTRICTIONS.MAX, [`пост`, `поста`, `постов`])}`));
     } else {
       const options = {
+        count: countPosts,
         titles: await readContent(titlesPath),
-        categories: readContent(categoriesPath),
+        categories: await readContent(categoriesPath),
         sentences: await readContent(sentencesPath),
         comments: await readContent(commentsPath)
-      }
+      };
       const content = JSON.stringify(generateOffers(options));
 
       try {
