@@ -10,13 +10,14 @@ const app = new Router();
 const {
   SearchService,
   CategoriesService,
-  ArticlesService
+  ArticlesService,
+  CommentsService
 } = require(`../../dataServices`);
 
 (async () => {
   const mocks = await getMocks(FILENAME);
 
-  articles(app, new ArticlesService(mocks));
+  articles(app, new ArticlesService(mocks), new CommentsService(mocks));
   categories(app, new CategoriesService(mocks));
   search(app, new SearchService(mocks));
 })();

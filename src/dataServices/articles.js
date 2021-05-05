@@ -23,6 +23,10 @@ class ArticlesService {
     return article;
   }
 
+  delete(articleId) {
+    this.articles = this.articles.filter((({id}) => id !== articleId));
+  }
+
   update(id, offerAttr) {
     Object.assign(this.findOne(id), offerAttr);
     return this.findOne(id);
