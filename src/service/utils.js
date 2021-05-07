@@ -1,5 +1,7 @@
 'use strict';
 
+const {readFile} = require(`fs/promises`);
+
 const shuffle = (someArray) => {
   for (let i = someArray.length - 1; i > 0; i--) {
     const randomPosition = Math.floor(Math.random() * i);
@@ -41,9 +43,25 @@ const getRandomDateFromPast = (dateShift) => {
   return `${result.toLocaleDateString()} ${result.toLocaleTimeString()}`;
 };
 
+const getCurrentDate = () => {
+  const currentDate = new Date();
+  return `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}`;
+};
+
+const getMocks = async (fileName) => {
+  try {
+    const content = await readFile(fileName);
+    return JSON.parse(content);
+  } catch (err) {
+    return console.error(`Что то пошло не так:`, err);
+  }
+};
+
 module.exports = {
   shuffle,
   getRandomInt,
   correctNounEnding,
-  getRandomDateFromPast
+  getRandomDateFromPast,
+  getMocks,
+  getCurrentDate
 };

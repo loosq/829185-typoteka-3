@@ -5,7 +5,8 @@ const {
   FILE_NAME,
   MAXIMUM_SENTENCES_ALLOWED,
   DATE_SHIFT,
-  MOCKS_RESTRICTIONS
+  MOCKS_RESTRICTIONS,
+  MAXIMUM_COMMENTS
 } = require(`../mocks`);
 
 const {
@@ -14,12 +15,13 @@ const {
   correctNounEnding,
   getRandomDateFromPast
 } = require(`../utils`);
-
+const {nanoid} = require(`nanoid`);
 const {writeFile, readFile} = require(`fs/promises`);
 const chalk = require(`chalk`);
 const titlesPath = `./data/titles.txt`;
 const categoriesPath = `./data/categories.txt`;
 const sentencesPath = `./data/sentences.txt`;
+const commentsPath = `./data/comments.txt`;
 
 const readContent = async (filePath) => {
   try {
@@ -31,15 +33,21 @@ const readContent = async (filePath) => {
   }
 };
 
-const generateOffers = (count, titles, categories, sentences) => (
-  Array(count).fill({}).map(() => ({
+const generateOffers = (options) => {
+  const {count, titles, categories, sentences, comments} = options;
+  return Array(count).fill({}).map(() => ({
+    id: nanoid(),
     title: titles[getRandomInt(0, titles.length - 1)],
     createdDate: getRandomDateFromPast(DATE_SHIFT),
     announce: shuffle(sentences).slice(1, MAXIMUM_SENTENCES_ALLOWED).join(` `),
     fullText: shuffle(sentences).slice(1, sentences.length).join(` `),
-    category: [categories[getRandomInt(0, categories.length - 1)]]
-  }))
-);
+    category: [categories[getRandomInt(0, categories.length - 1)]],
+    comments: Array(getRandomInt(1, MAXIMUM_COMMENTS)).fill({}).map(() => ({
+      id: nanoid(),
+      text: shuffle(comments).slice(1, sentences.length).join(` `)
+    }))
+  }));
+};
 
 module.exports = {
   name: `--generate`,
@@ -47,14 +55,18 @@ module.exports = {
 
     const [count] = args;
     const countPosts = Number.parseInt(count, 10) || DEFAULT_COUNT;
-    const titles = await readContent(titlesPath);
-    const categories = await readContent(categoriesPath);
-    const sentences = await readContent(sentencesPath);
 
     if (countPosts > MOCKS_RESTRICTIONS.MAX) {
       return console.info(chalk.red(`Не больше ${MOCKS_RESTRICTIONS.MAX} ${correctNounEnding(MOCKS_RESTRICTIONS.MAX, [`пост`, `поста`, `постов`])}`));
     } else {
-      const content = JSON.stringify(generateOffers(countPosts, titles, categories, sentences));
+      const options = {
+        count: countPosts,
+        titles: await readContent(titlesPath),
+        categories: await readContent(categoriesPath),
+        sentences: await readContent(sentencesPath),
+        comments: await readContent(commentsPath)
+      };
+      const content = JSON.stringify(generateOffers(options));
 
       try {
         await writeFile(FILE_NAME, content);

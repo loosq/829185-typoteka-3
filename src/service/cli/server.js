@@ -1,26 +1,15 @@
 'use strict';
 
-const {HTTP_CODES} = require(`../constants`);
-const {readFile} = require(`fs/promises`);
+const {HTTP_CODES, JSON_LIMIT} = require(`../constants`);
 const chalk = require(`chalk`);
 const DEFAULT_SERVER_PORT = 3000;
-const FILENAME = `mocks.json`;
-
 const express = require(`express`);
 const app = express();
+const routes = require(`../api`);
 
-app.get(`/posts`, async (req, res) => {
-  try {
-    const content = await readFile(FILENAME);
-    const mocks = JSON.parse(content);
-    res.json(mocks);
-  } catch (err) {
-    console.error(chalk.red(`Что то пошло не так:`, err));
-    res.status(HTTP_CODES.INTERNAL_SERVER_ERROR).send(err);
-  }
-});
+app.use(express.json({limit: JSON_LIMIT}));
+app.use(`/api`, routes);
 
-app.use(express.json());
 app.use((req, res) => {
   res.status(HTTP_CODES.NOT_FOUND).send(`Not found`);
 });
