@@ -21,9 +21,9 @@ module.exports = {
 
     app.use((req, res, next) => {
       logger.debug(`Start request to url ${req.url}`);
-      if (res.statusCode === HTTP_CODES.NOT_FOUND) {
-        logger.error(`${req.url} not found`);
-      }
+      res.on(`finish`, () => {
+        logger.info(`Response status code ${req.statusCode}`);
+      })
       next();
     });
 
