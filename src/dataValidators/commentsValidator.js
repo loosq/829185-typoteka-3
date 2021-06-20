@@ -1,12 +1,12 @@
 'use strict';
 
 const {HTTP_CODES} = require(`../service/constants`);
-const commentKeys = [`text`];
+const commentKey = `text`;
 
 module.exports = (req, res, next) => {
-  const newCommentKeys = Object.keys(req.body);
+  const hasCommentText = commentKey in req.body && req.body[commentKey].length;
 
-  if (!commentKeys.every((key) => newCommentKeys.includes(key))) {
+  if (!hasCommentText) {
     res.status(HTTP_CODES.BAD_REQUEST).send(`Bad request`);
   }
 

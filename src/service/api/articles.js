@@ -23,6 +23,7 @@ module.exports = (app, articlesService, commentsService) => {
   });
 
   route.put(`/:articleId`, validateArticleAttr, (req, res) => {
+
     const {articleId} = req.params;
     const haveArticle = articlesService.findOne(articleId);
 
@@ -30,8 +31,8 @@ module.exports = (app, articlesService, commentsService) => {
       return res.status(HTTP_CODES.BAD_REQUEST).send(`No article with such id: ${articleId}`);
     }
 
-    const newArticle = articlesService.update(articleId, req.body);
-    return res.status(HTTP_CODES.CREATED).json(newArticle);
+    const updatedArticle = articlesService.update(articleId, req.body);
+    return res.status(HTTP_CODES.OK).json(updatedArticle);
   });
 
   route.delete(`/:articleId`, (req, res) => {
