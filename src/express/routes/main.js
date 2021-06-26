@@ -4,24 +4,18 @@ const {Router} = require(`express`);
 const mainRouter = new Router();
 const api = require(`../api`).getAPI();
 
-mainRouter.get(`/`, async (req, res) => {
-  const articles = await api.getArticle();
-  res.render(`main`, {articles});
-});
 mainRouter.get(`/login`, (req, res) => res.render(`login.pug`));
 mainRouter.get(`/search`, async (req, res) => {
 
   try {
     const {search} = req.query;
-    const results = await api.search(search);
-
-    res.render(`search-result`, {
-      results
+    const results = await api.search(search) || [];
+    res.render(`search-${results.length ? 'results' : 'nothing'}`, {
+      results,
+      search
     });
   } catch (error) {
-    res.render(`search-result`, {
-      results: []
-    });
+    res.render(`search-empty`);
   }
 });
 mainRouter.get(`/comments`, async (req, res) => {
@@ -29,13 +23,5 @@ mainRouter.get(`/comments`, async (req, res) => {
   const slicedProposals = proposals.slice(0, 3);
   res.render(`comments`, {proposals: slicedProposals});
 });
-mainRouter.get(`/my-tickets`, async (req, res) => {
-  const proposals = await api.getOffers();
-  res.render(`my-tickets`, {proposals});
-});
-mainRouter.get(`/new-ticket`, (req, res) => res.render(`new-ticket.pug`));
-mainRouter.get(`/sign-up`, (req, res) => res.render(`sign-up.pug`));
-mainRouter.get(`/ticket`, (req, res) => res.render(`ticket.pug`));
-mainRouter.get(`/ticket-edit`, (req, res) => res.render(`ticket-edit.pug`));
 
 module.exports = mainRouter;

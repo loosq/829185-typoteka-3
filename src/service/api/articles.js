@@ -17,6 +17,17 @@ module.exports = (app, articlesService, commentsService) => {
     return res.status(HTTP_CODES.OK).json(articles);
   });
 
+  route.get(`/:articleId`, (req, res) => {
+    const {articleId} = req.params;
+    const haveArticle = articlesService.findOne(articleId);
+
+    if (!haveArticle) {
+      return res.status(HTTP_CODES.BAD_REQUEST).send(`No article with such id: ${articleId}`);
+    }
+
+    return res.status(HTTP_CODES.OK).json(haveArticle);
+  });
+
   route.post(`/`, validateNewArticle, (req, res) => {
     const newArticle = articlesService.create(req.body);
     return res.status(HTTP_CODES.CREATED).json(newArticle);
