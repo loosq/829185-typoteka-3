@@ -12,10 +12,6 @@ class ArticlesService {
     return this.articles;
   }
 
-  search() {
-    return this.articles;
-  }
-
   findOne(articleId) {
     return this.articles.find(({id}) => articleId === id);
   }
