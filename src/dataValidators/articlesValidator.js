@@ -1,7 +1,7 @@
 'use strict';
 
 const {HTTP_CODES} = require(`../service/constants`);
-const articleKeys = [`title`, `announce`, `fullText`, `category`, `comments`];
+const articleKeys = [`title`, `announce`, `fullText`, `categories`, `comments`];
 
 const validateArticleAttr = (req, res, next) => {
   const isExistArticleKeys = req.body && Object.keys(req.body);
@@ -9,6 +9,7 @@ const validateArticleAttr = (req, res, next) => {
 
   if (!isExistArticleKeys || !isExistNewArticles) {
     res.status(HTTP_CODES.BAD_REQUEST).send(`Bad request`);
+    return;
   }
 
   next();
@@ -16,10 +17,12 @@ const validateArticleAttr = (req, res, next) => {
 
 const validateNewArticle = (req, res, next) => {
   const isExistArticleKeys = req.body && Object.keys(req.body);
-  const isExistNewArticles = isExistArticleKeys.every((key) => articleKeys.includes(key));
+  const isExistNewArticles = articleKeys.every((key) => isExistArticleKeys.includes(key));
+  const isExistTitle = req.body.title && String(req.body.title).trim().length;
 
-  if (!isExistArticleKeys || !isExistNewArticles) {
+  if (!isExistArticleKeys.length || !isExistNewArticles || !isExistTitle) {
     res.status(HTTP_CODES.BAD_REQUEST).send(`Bad request`);
+    return;
   }
 
   next();

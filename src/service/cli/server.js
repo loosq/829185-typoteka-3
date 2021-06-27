@@ -23,7 +23,7 @@ module.exports = {
       logger.debug(`Start request to url ${req.url}`);
       res.on(`finish`, () => {
         logger.info(`Response status code ${req.statusCode}`);
-      })
+      });
       next();
     });
 

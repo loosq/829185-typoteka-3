@@ -41,7 +41,7 @@ const generateOffers = (options) => {
     createdDate: getRandomDateFromPast(DATE_SHIFT),
     announce: shuffle(sentences).slice(1, MAXIMUM_SENTENCES_ALLOWED).join(` `),
     fullText: shuffle(sentences).slice(1, sentences.length).join(` `),
-    category: [categories[getRandomInt(0, categories.length - 1)]],
+    categories: [categories[getRandomInt(0, categories.length - 1)]],
     comments: Array(getRandomInt(1, MAXIMUM_COMMENTS)).fill({}).map(() => ({
       id: nanoid(),
       text: shuffle(comments).slice(1, sentences.length).join(` `)

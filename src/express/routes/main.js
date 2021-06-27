@@ -10,7 +10,7 @@ mainRouter.get(`/search`, async (req, res) => {
   try {
     const {search} = req.query;
     const results = await api.search(search) || [];
-    res.render(`search-${results.length ? 'results' : 'nothing'}`, {
+    res.render(`search-${results.length ? `results` : `nothing`}`, {
       results,
       search
     });

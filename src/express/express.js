@@ -18,6 +18,10 @@ app.use(`/`, mainRoutes);
 
 app.use(express.static(path.resolve(__dirname, PUBLIC_DIR)));
 app.use(express.static(path.resolve(__dirname, UPLOAD_DIR)));
+app.use((err, req, res, next) => {
+  console.log(`Something went wrong`, err);
+  next(err);
+});
 
 app.use((req, res) => res.status(400).render(`errors/404`));
 app.use((req, res) => res.status(500).render(`errors/500`));

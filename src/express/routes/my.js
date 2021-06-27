@@ -6,7 +6,7 @@ const api = require(`../api`).getAPI();
 
 myRouter.get(`/`, async (req, res) => {
   const articles = await api.getArticles();
-  res.render(`admin-publications`, {articles})
+  res.render(`admin-publications`, {articles});
 });
 myRouter.get(`/comments`, async (req, res) => {
   const articles = await api.getArticles();
@@ -15,7 +15,7 @@ myRouter.get(`/comments`, async (req, res) => {
    * судя по шаблону, хотим получить комменты авторизовавшегося пользователя, возможно доработать это после внедрения автаризации
    * */
 
-  res.render(`admin-comments.pug`, { articles })
+  res.render(`admin-comments.pug`, {articles});
 });
 
 module.exports = myRouter;
