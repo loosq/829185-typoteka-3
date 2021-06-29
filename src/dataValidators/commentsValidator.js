@@ -8,6 +8,7 @@ module.exports = (req, res, next) => {
 
   if (!hasCommentText) {
     res.status(HTTP_CODES.BAD_REQUEST).send(`Bad request`);
+    return;
   }
 
   next();

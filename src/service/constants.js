@@ -17,10 +17,13 @@ const HTTP_CODES = {
 
 const JSON_LIMIT = 100000;
 
+const DEFAULT_SERVICE_PORT = 3000;
+
 module.exports = {
   DEFAULT_COMMAND,
   USER_ARGV_INDEX,
   ExitCode,
   HTTP_CODES,
-  JSON_LIMIT
+  JSON_LIMIT,
+  DEFAULT_SERVICE_PORT
 };

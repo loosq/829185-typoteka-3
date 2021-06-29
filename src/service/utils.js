@@ -57,11 +57,26 @@ const getMocks = async (fileName) => {
   }
 };
 
+const countCategoriesToArticles = (articles) => {
+  let result = {};
+  if (Array.isArray(articles)) {
+    articles.forEach((article) => article.categories.forEach((category) => {
+      result[category] = category in result ? result[category] + 1 : 1;
+    }));
+  }
+
+  return result;
+};
+
+const mostPopularArticles = (articles) => Array.isArray(articles) && articles.sort((a, b) => b.comments.length - a.comments.length);
+
 module.exports = {
   shuffle,
   getRandomInt,
   correctNounEnding,
   getRandomDateFromPast,
   getMocks,
-  getCurrentDate
+  getCurrentDate,
+  countCategoriesToArticles,
+  mostPopularArticles
 };

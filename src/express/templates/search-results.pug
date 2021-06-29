@@ -8,5 +8,9 @@ block content
         .search.search-page__form
           form(action='#', method='get')
             label
-              input(type='text', name='search', placeholder='Что ищем?')
+              input(type='text', name='search', placeholder=search, value=search)
             button.search__button.button.button--transparent(type='submit') Найти
+          .search__result
+            each result in results
+              time.search__date(datetime=`${result.createdDate}`) #{result.createdDate}
+              a.search__link #{result.title}

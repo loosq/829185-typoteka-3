@@ -8,7 +8,7 @@ const express = require(`express`);
 const app = express();
 
 const routes = initApi(validArticles);
-const apiSearch = `/api/search?q=`;
+const apiSearch = `/api/search?search=`;
 app.use(`/api`, routes);
 
 describe(`Search API end-points`, () => {

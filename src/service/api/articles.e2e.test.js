@@ -21,6 +21,11 @@ app.use(`/api`, routes);
 
 
 describe(`Articles API end-points, method GET`, () => {
+  test(`When get /api/articles/:id valid request, res code should be 200`, async () => {
+    const res = await request(app).get(`${apiArticles}/${validArticles[0].id}`);
+    expect(res.statusCode).toBe(HTTP_CODES.OK);
+  });
+
   test(`When get /api/articles valid request, res code should be 200`, async () => {
     const res = await request(app).get(`${apiArticles}`);
     expect(res.statusCode).toBe(HTTP_CODES.OK);
