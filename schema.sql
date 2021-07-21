@@ -23,7 +23,6 @@ CREATE TABLE posts(
   title varchar(255) NOT NULL,
   announce text NOT NULL,
   fullText text NOT NULL,
-  type varchar(5) NOT NULL,
   picture varchar(50),
   user_id integer NOT NULL,
   created_at timestamp DEFAULT current_timestamp,
