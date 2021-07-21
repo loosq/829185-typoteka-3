@@ -70,6 +70,8 @@ const countCategoriesToArticles = (articles) => {
 
 const mostPopularArticles = (articles) => Array.isArray(articles) && articles.sort((a, b) => b.comments.length - a.comments.length);
 
+const getPictureFileName = (count) => `item${count < 10 ? `0${count}` : count}.jpg`;
+
 module.exports = {
   shuffle,
   getRandomInt,
@@ -78,5 +80,6 @@ module.exports = {
   getMocks,
   getCurrentDate,
   countCategoriesToArticles,
-  mostPopularArticles
+  mostPopularArticles,
+  getPictureFileName
 };
