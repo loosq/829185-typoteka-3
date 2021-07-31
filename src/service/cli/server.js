@@ -9,6 +9,7 @@ const FILENAME = `mocks.json`;
 const {getMocks} = require(`../utils`);
 const {getLogger} = require(`../../logger/logger`);
 const logger = getLogger();
+const sequelize = require(`../../service/lib/sequelize`);
 
 app.use(express.json({limit: JSON_LIMIT}));
 
@@ -16,9 +17,17 @@ module.exports = {
   app,
   name: `--server`,
   async run(args) {
+    try {
+      logger.info(`Trying to connect to database...`);
+      await sequelize.authenticate();
+    } catch (err) {
+      logger.error(`An error occurred: ${err.message}`);
+      process.exit(1);
+    }
+    logger.info(`Connection to database established`);
+
     const mocks = await getMocks(FILENAME);
     const routes = initApi(mocks);
-
     app.use((req, res, next) => {
       logger.debug(`Start request to url ${req.url}`);
       res.on(`finish`, () => {
