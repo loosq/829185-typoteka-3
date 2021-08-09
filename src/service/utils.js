@@ -72,6 +72,20 @@ const mostPopularArticles = (articles) => Array.isArray(articles) && articles.so
 
 const getPictureFileName = (count) => `item${count < 10 ? `0${count}` : count}.jpg`;
 
+const getRandomSubarray = (items) => {
+  items = items.slice();
+  let count = getRandomInt(1, items.length - 1);
+  let result = [];
+  while (count--) {
+    result.push(
+      ...items.splice(
+        getRandomInt(0, items.length - 1), 1
+      )
+    );
+  }
+  return result;
+};
+
 module.exports = {
   shuffle,
   getRandomInt,
@@ -81,5 +95,6 @@ module.exports = {
   getCurrentDate,
   countCategoriesToArticles,
   mostPopularArticles,
-  getPictureFileName
+  getPictureFileName,
+  getRandomSubarray
 };

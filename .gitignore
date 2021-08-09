@@ -19,4 +19,5 @@ build/
 src/express/upload/img/
 
 # Файл с переменными окружения
+!example.env
 .env
