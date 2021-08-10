@@ -12,8 +12,9 @@ const {HTTP_CODES} = require(`../../service/constants`);
 module.exports = (app, articlesService, commentsService) => {
   app.use(`/articles`, route);
 
-  route.get(`/`, (req, res) => {
-    const articles = articlesService.findAll();
+  route.get(`/`, async (req, res) => {
+    const articles = await articlesService.findAll(true);
+
     return res.status(HTTP_CODES.OK).json(articles);
   });
 

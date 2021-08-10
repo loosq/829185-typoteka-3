@@ -2,9 +2,9 @@
 
 const {DataTypes, Model} = require(`sequelize`);
 
-class Post extends Model {}
+class Article extends Model {}
 
-const define = (sequelize) => Post.init({
+const define = (sequelize) => Article.init({
   title: {
     type: DataTypes.STRING,
     allowNull: false
@@ -20,8 +20,8 @@ const define = (sequelize) => Post.init({
   },
 }, {
   sequelize,
-  modelName: `Post`,
-  tableName: `posts`
+  modelName: `Article`,
+  tableName: `articles`
 });
 
 module.exports = define;

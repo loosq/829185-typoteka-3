@@ -57,17 +57,6 @@ const getMocks = async (fileName) => {
   }
 };
 
-const countCategoriesToArticles = (articles) => {
-  let result = {};
-  if (Array.isArray(articles)) {
-    articles.forEach((article) => article.categories.forEach((category) => {
-      result[category] = category in result ? result[category] + 1 : 1;
-    }));
-  }
-
-  return result;
-};
-
 const mostPopularArticles = (articles) => Array.isArray(articles) && articles.sort((a, b) => b.comments.length - a.comments.length);
 
 const getPictureFileName = (count) => `item${count < 10 ? `0${count}` : count}.jpg`;
@@ -93,7 +82,6 @@ module.exports = {
   getRandomDateFromPast,
   getMocks,
   getCurrentDate,
-  countCategoriesToArticles,
   mostPopularArticles,
   getPictureFileName,
   getRandomSubarray

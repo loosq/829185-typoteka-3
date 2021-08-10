@@ -1,35 +1,45 @@
 'use strict';
 
-const {nanoid} = require(`nanoid`);
-const {getCurrentDate} = require(`../service/utils`);
+const Alias = require(`../service/models/alias`);
 
 class ArticlesService {
-  constructor(articles) {
-    this.articles = articles || [];
+  constructor(sequelize) {
+    this._Article = sequelize.models.Article;
+    this._Comment = sequelize.models.Comment;
+    this._Category = sequelize.models.Category;
   }
 
-  findAll() {
-    return this.articles;
+  async create(articleData) {
+    const article = await this._Article.create(articleData);
+    await article.addCategories(articleData.categories);
+    return article.get();
   }
 
-  findOne(articleId) {
-    return this.articles.find(({id}) => articleId === id);
+  async drop(id) {
+    const deletedRows = await this._Article.destroy({
+      where: {id}
+    });
+    return !!deletedRows;
   }
 
-  create(article) {
-    article.id = nanoid();
-    article.createdDate = getCurrentDate();
-    this.articles.push(article);
-    return article;
+  async findAll(needComments) {
+    const include = [Alias.CATEGORIES];
+    if (needComments) {
+      include.push(Alias.COMMENTS);
+    }
+    const articles = await this._Article.findAll({include});
+    return articles.map((item) => item.get());
   }
 
-  delete(articleId) {
-    this.articles = this.articles.filter((({id}) => id !== articleId));
+  findOne(id) {
+    return this._Article.findByPk(id, {include: [Alias.CATEGORIES]});
   }
 
-  update(id, offerAttr) {
-    Object.assign(this.findOne(id), offerAttr);
-    return this.findOne(id);
+  async update(id, article) {
+    const [affectedRows] = await this._Article.update(article, {
+      where: {id}
+    });
+    return !!affectedRows;
   }
 }
 

@@ -2,7 +2,7 @@
 
 module.exports = {
   COMMENTS: `comments`,
-  POSTS: `posts`,
+  ARTICLE: `article`,
   CATEGORIES: `categories`,
-  POST_CATEGORIES: `postCategories`
+  ARTICLE_CATEGORIES: `articleCategories`
 };

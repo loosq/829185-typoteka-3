@@ -2,8 +2,6 @@
 
 const sequelize = require(`../lib/sequelize`);
 const {getLogger} = require(`../../logger/logger`);
-const defineModels = require(`../models`);
-const Alias = require(`../models/alias`);
 const initDB = require(`../lib/init-db`);
 
 const {
@@ -39,7 +37,7 @@ const readContent = async (filePath) => {
   }
 };
 
-const generateOffers = (options) => {
+const generateArticles = (options) => {
   const {count, titles, categories, sentences, comments} = options;
   return Array(count).fill({}).map(() => ({
     title: titles[getRandomInt(0, titles.length - 1)],
@@ -60,7 +58,7 @@ module.exports = {
   async run(args) {
 
     const [count] = args;
-    const countPosts = Number.parseInt(count, 10) || DEFAULT_COUNT;
+    const countArticles = Number.parseInt(count, 10) || DEFAULT_COUNT;
 
     try {
       logger.info(`Trying to connect to database...`);
@@ -71,20 +69,20 @@ module.exports = {
     }
     logger.info(`Connection to database established`);
 
-    if (countPosts > MOCKS_RESTRICTIONS.MAX) {
+    if (countArticles > MOCKS_RESTRICTIONS.MAX) {
       return console.info(chalk.red(`Не больше ${MOCKS_RESTRICTIONS.MAX} ${correctNounEnding(MOCKS_RESTRICTIONS.MAX, [`пост`, `поста`, `постов`])}`));
     } else {
       debugger
       const categories = await readContent(categoriesPath);
       const options = {
-        count: countPosts,
+        count: countArticles,
         titles: await readContent(titlesPath),
         sentences: await readContent(sentencesPath),
         comments: await readContent(commentsPath),
         categories
       };
-      const posts = generateOffers(options);
-      await initDB(sequelize, {categories, posts});
+      const articles = generateArticles(options);
+      await initDB(sequelize, {categories, articles});
 
       return console.info(chalk.green(`Operation success. Database is created.`));
     }

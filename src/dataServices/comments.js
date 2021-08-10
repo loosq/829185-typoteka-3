@@ -1,23 +1,30 @@
 'use strict';
-const {nanoid} = require(`nanoid`);
 
 class CommentsService {
-  findAll(article) {
-    return article.comments || [];
+  constructor(sequelize) {
+    this._Article = sequelize.models.Article;
+    this._Comment = sequelize.models.Comment;
   }
 
-  findOne(article, commentId) {
-    return article.comments.find(({id}) => id === commentId);
+  create(offerId, comment) {
+    return this._Comment.create({
+      offerId,
+      ...comment
+    });
   }
 
-  delete(article, commentId) {
-    article.comments = article.comments.filter(({id}) => id !== commentId);
+  async destroy(id) {
+    const deletedRows = this._Comment.destroy({
+      where: {id}
+    });
+    return !!deletedRows;
   }
 
-  create(haveArticle, newComment) {
-    newComment.id = nanoid();
-    haveArticle.comments.push(newComment);
-    return haveArticle;
+  findAll(articleId) {
+    return this._Comment.findAll({
+      where: {articleId},
+      raw: true
+    });
   }
 }
 

@@ -9,7 +9,7 @@
     "test::rest": "jest",
     "lint": "eslint --ext .js src/",
     "lint::fix": "eslint --fix --ext .js src/",
-    "start.dev": "nodemon ./src/service/service.js --server",
+    "start.dev": "nodemon -r dotenv/config ./src/service/service.js --server",
     "start-front-server": "nodemon ./src/express/express.js"
   },
   "repository": {

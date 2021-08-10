@@ -7,7 +7,6 @@ module.exports = (req, res, next) => {
 
   if (typeof search !== `string` || !search.length) {
     res.status(HTTP_CODES.BAD_REQUEST).send(`Bad request`);
-    return;
   }
 
   next();
