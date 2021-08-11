@@ -82,6 +82,7 @@ module.exports = {
         categories
       };
       const articles = generateArticles(options);
+
       await initDB(sequelize, {categories, articles});
 
       return console.info(chalk.green(`Operation success. Database is created.`));

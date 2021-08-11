@@ -31,8 +31,10 @@ class ArticlesService {
     return articles.map((item) => item.get());
   }
 
-  findOne(id) {
-    return this._Article.findByPk(id, {include: [Alias.CATEGORIES]});
+  findOne(id, needComments) {
+    const options = needComments ? [Alias.CATEGORIES, Alias.COMMENTS] : [Alias.CATEGORIES];
+
+    return this._Article.findByPk(id, {include: options});
   }
 
   async update(id, article) {

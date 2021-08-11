@@ -1,9 +1,9 @@
 'use strict';
 
 const {Router} = require(`express`);
-const search = require(`../api/search`);
-const categories = require(`../api/categories`);
-const articles = require(`../api/articles`);
+const search = require(`./search`);
+const categories = require(`./categories`);
+const articles = require(`./articles`);
 const sequelize = require(`../lib/sequelize`);
 const defineModels = require(`../models`);
 const app = new Router();

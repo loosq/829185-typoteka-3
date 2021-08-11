@@ -22,8 +22,8 @@ class API {
     return this._load(`/articles`);
   }
 
-  getArticle(id) {
-    return this._load(`/articles/${id}`);
+  getArticle(id, needComments = false) {
+    return this._load(`/articles/${id}`, {params: {needComments}});
   }
 
   search(search) {

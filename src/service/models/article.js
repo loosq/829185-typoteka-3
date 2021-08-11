@@ -11,11 +11,11 @@ const define = (sequelize) => Article.init({
   },
   picture: DataTypes.STRING,
   announce: {
-    type: DataTypes.TEXT('long'),
+    type: DataTypes.TEXT,
     allowNull: false
   },
   fullText: {
-    type: DataTypes.TEXT('long'),
+    type: DataTypes.TEXT,
     allowNull: false
   },
 }, {

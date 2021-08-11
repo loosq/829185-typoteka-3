@@ -8,9 +8,9 @@ const {HTTP_CODES} = require(`../constants`);
 module.exports = (app, service) => {
   app.use(`/search`, route);
 
-  route.get(`/`, searchValidator, (req, res) => {
+  route.get(`/`, searchValidator, async (req, res) => {
     const {search} = req.query;
-    const response = service.findAll(search);
+    const response = await service.findAll(search);
 
     return res.status(HTTP_CODES.OK).json(response);
   });

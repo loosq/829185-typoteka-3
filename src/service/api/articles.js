@@ -13,14 +13,17 @@ module.exports = (app, articlesService, commentsService) => {
   app.use(`/articles`, route);
 
   route.get(`/`, async (req, res) => {
+    console.log('here!');
     const articles = await articlesService.findAll(true);
 
     return res.status(HTTP_CODES.OK).json(articles);
   });
 
-  route.get(`/:articleId`, (req, res) => {
+  route.get(`/:articleId`, async (req, res) => {
     const {articleId} = req.params;
-    const haveArticle = articlesService.findOne(articleId);
+    const {needComments} = req.query;
+
+    const haveArticle = await articlesService.findOne(articleId, needComments);
 
     if (!haveArticle) {
       return res.status(HTTP_CODES.BAD_REQUEST).send(`No article with such id: ${articleId}`);
@@ -29,8 +32,9 @@ module.exports = (app, articlesService, commentsService) => {
     return res.status(HTTP_CODES.OK).json(haveArticle);
   });
 
-  route.post(`/`, validateNewArticle, (req, res) => {
-    const newArticle = articlesService.create(req.body);
+  route.post(`/`, validateNewArticle, async (req, res) => {
+    const newArticle = await articlesService.create(req.body);
+
     return res.status(HTTP_CODES.CREATED).json(newArticle);
   });
 
