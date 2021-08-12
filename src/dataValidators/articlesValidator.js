@@ -20,10 +20,10 @@ const validateNewArticle = (req, res, next) => {
   const isExistTitle = req.body.title && String(req.body.title).trim().length;
 
   if (!isExistArticleKeys.length || !isExistNewArticles || !isExistTitle) {
-    res.status(HTTP_CODES.BAD_REQUEST).send(`Bad request`);
+    return res.status(HTTP_CODES.BAD_REQUEST).send(`Bad request`);
   }
 
-  next();
+  return next();
 };
 
 module.exports = {

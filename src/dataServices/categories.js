@@ -19,8 +19,8 @@ class CategoriesService {
           `name`,
           [
             Sequelize.fn(
-              `COUNT`,
-              `*`
+                `COUNT`,
+                `*`
             ),
             `count`
           ]

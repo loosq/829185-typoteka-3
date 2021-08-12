@@ -41,8 +41,8 @@ describe(`API returns category list`, () => {
   });
 
   it(`Category names are mocked categories`,
-    () => expect(response.body.map((it) => it.name)).toEqual(
-      expect.arrayContaining(mockCategories.map(({name}) => name))
-    )
+      () => expect(response.body.map((it) => it.name)).toEqual(
+          expect.arrayContaining(mockCategories.map(({name}) => name))
+      )
   );
 });

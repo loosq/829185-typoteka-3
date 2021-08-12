@@ -82,8 +82,8 @@ articlesRouter.get(`/edit/:id`, async (req, res) => {
 articlesRouter.get(`/:id`, async (req, res) => {
 
   const article = await api.getArticle(req.params.id, true);
-  console.log(article)
-  res.render('post-user', {article});
+  console.log(article);
+  res.render(`post-user`, {article});
 });
 
 module.exports = articlesRouter;

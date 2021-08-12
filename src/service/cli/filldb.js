@@ -72,7 +72,6 @@ module.exports = {
     if (countArticles > MOCKS_RESTRICTIONS.MAX) {
       return console.info(chalk.red(`Не больше ${MOCKS_RESTRICTIONS.MAX} ${correctNounEnding(MOCKS_RESTRICTIONS.MAX, [`пост`, `поста`, `постов`])}`));
     } else {
-      debugger
       const categories = await readContent(categoriesPath);
       const options = {
         count: countArticles,
