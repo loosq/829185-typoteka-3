@@ -20,20 +20,35 @@ const storage = multer.diskStorage({
 });
 const upload = multer({storage});
 
+const ARTICLES_PER_PAGE = 4;
+
 articlesRouter.get(`/`, async (req, res) => {
+  // получаем номер страницы
+  let {page = 1} = req.query;
+  page = +page;
+
+  // количество запрашиваемых объявлений равно количеству объявлений на странице
+  const limit = ARTICLES_PER_PAGE;
+
+  // количество объявлений, которое нам нужно пропустить - это количество объявлений на предыдущих страницах
+  const offset = (page - 1) * ARTICLES_PER_PAGE;
   const [
-    allArticles,
+    {count, articles},
     categoriesToArticles
   ] = await Promise.all([
-    api.getArticles(),
+    api.getArticles({limit, offset, comments: true}),
     api.getCategories(true)
   ]);
 
-  const sortedArticles = mostPopularArticles(allArticles);
+  console.log(articles);
+  const sortedArticles = mostPopularArticles(articles);
   // TODO добавить в коммент дату и сортировать по ней
   const lastCommentedArticles = sortedArticles.slice(0, 3);
+  // количество страниц — это общее количество объявлений, поделённое на количество объявлений на странице (с округлением вверх)
+  const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
 
-  res.render(`main`, {allArticles, categoriesToArticles, sortedArticles, lastCommentedArticles});
+  // передадим все эти данные в шаблон
+  res.render(`main`, {articles, categoriesToArticles, lastCommentedArticles, sortedArticles, page, totalPages});
 });
 articlesRouter.get(`/categories/:id`, (req, res) => res.send(`/category/:id ${req.params.id}`));
 let categories;

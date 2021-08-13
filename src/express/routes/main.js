@@ -19,7 +19,7 @@ mainRouter.get(`/search`, async (req, res) => {
   }
 });
 mainRouter.get(`/comments`, async (req, res) => {
-  const proposals = await api.getOffers();
+  const proposals = await api.getArticles({comments: true});
   const slicedProposals = proposals.slice(0, 3);
   res.render(`comments`, {proposals: slicedProposals});
 });

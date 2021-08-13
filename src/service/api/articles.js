@@ -13,9 +13,16 @@ module.exports = (app, articlesService, commentsService) => {
   app.use(`/articles`, route);
 
   route.get(`/`, async (req, res) => {
-    const articles = await articlesService.findAll(true);
+    const {offset, limit, comments} = req.query;
+    let result;
 
-    return res.status(HTTP_CODES.OK).json(articles);
+    if (limit || offset) {
+      result = await articlesService.findPage({limit, offset, comments});
+    } else {
+      result = await articlesService.findAll(comments);
+    }
+
+    res.status(HTTP_CODES.OK).json(result);
   });
 
   route.get(`/:articleId`, async (req, res) => {
