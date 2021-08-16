@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 const articlesRouter = new Router();
-const {countCategoriesToArticles, mostPopularArticles, getCurrentDate} = require(`../../service/utils`);
+const {mostPopularArticles, getCurrentDate} = require(`../../service/utils`);
 const api = require(`../api`).getAPI();
 const {nanoid} = require(`nanoid`);
 const path = require(`path`);
@@ -21,9 +21,15 @@ const storage = multer.diskStorage({
 const upload = multer({storage});
 
 articlesRouter.get(`/`, async (req, res) => {
-  const allArticles = await api.getArticles();
+  const [
+    allArticles,
+    categoriesToArticles
+  ] = await Promise.all([
+    api.getArticles(),
+    api.getCategories(true)
+  ]);
+
   const sortedArticles = mostPopularArticles(allArticles);
-  const categoriesToArticles = countCategoriesToArticles(allArticles);
   // TODO добавить в коммент дату и сортировать по ней
   const lastCommentedArticles = sortedArticles.slice(0, 3);
 
@@ -73,6 +79,11 @@ articlesRouter.get(`/edit/:id`, async (req, res) => {
 
   res.render(`admin-add-new-post`, {article});
 });
-articlesRouter.get(`/:id`, (req, res) => res.send(`/articles/:id ${req.params.id}`));
+articlesRouter.get(`/:id`, async (req, res) => {
+
+  const article = await api.getArticle(req.params.id, true);
+  console.log(article);
+  res.render(`post-user`, {article});
+});
 
 module.exports = articlesRouter;

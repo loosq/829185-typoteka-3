@@ -12,14 +12,17 @@ const {HTTP_CODES} = require(`../../service/constants`);
 module.exports = (app, articlesService, commentsService) => {
   app.use(`/articles`, route);
 
-  route.get(`/`, (req, res) => {
-    const articles = articlesService.findAll();
+  route.get(`/`, async (req, res) => {
+    const articles = await articlesService.findAll(true);
+
     return res.status(HTTP_CODES.OK).json(articles);
   });
 
-  route.get(`/:articleId`, (req, res) => {
+  route.get(`/:articleId`, async (req, res) => {
     const {articleId} = req.params;
-    const haveArticle = articlesService.findOne(articleId);
+    const {needComments} = req.query;
+
+    const haveArticle = await articlesService.findOne(articleId, needComments);
 
     if (!haveArticle) {
       return res.status(HTTP_CODES.BAD_REQUEST).send(`No article with such id: ${articleId}`);
@@ -28,8 +31,9 @@ module.exports = (app, articlesService, commentsService) => {
     return res.status(HTTP_CODES.OK).json(haveArticle);
   });
 
-  route.post(`/`, validateNewArticle, (req, res) => {
-    const newArticle = articlesService.create(req.body);
+  route.post(`/`, validateNewArticle, async (req, res) => {
+    const newArticle = await articlesService.create(req.body);
+
     return res.status(HTTP_CODES.CREATED).json(newArticle);
   });
 
@@ -46,15 +50,15 @@ module.exports = (app, articlesService, commentsService) => {
     return res.status(HTTP_CODES.OK).json(updatedArticle);
   });
 
-  route.delete(`/:articleId`, (req, res) => {
+  route.delete(`/:articleId`, async (req, res) => {
     const {articleId} = req.params;
-    const haveArticle = articlesService.findOne(articleId);
+    const haveArticle = await articlesService.findOne(articleId);
 
     if (!haveArticle) {
       return res.status(HTTP_CODES.BAD_REQUEST).send(`No article with such id: ${articleId}`);
     }
+    await articlesService.drop(articleId);
 
-    articlesService.delete(articleId);
     return res.status(HTTP_CODES.OK).send(`Article with id: ${articleId}, was successfully deleted`);
   });
 
@@ -70,33 +74,36 @@ module.exports = (app, articlesService, commentsService) => {
     return res.status(HTTP_CODES.OK).json(comments);
   });
 
-  route.delete(`/:articleId/comments/:commentId`, (req, res) => {
+  route.delete(`/:articleId/comments/:commentId`, async (req, res) => {
     const {articleId, commentId} = req.params;
-    const haveArticle = articlesService.findOne(articleId);
-    if (!haveArticle) {
-      return res.status(HTTP_CODES.BAD_REQUEST).send(`No article with such id: ${articleId}`);
+    const article = await articlesService.findOne(articleId);
+
+    if (!article) {
+      return res.status(HTTP_CODES.BAD_REQUEST)
+        .send(`Can not delete, no such id: ${articleId} in articles`);
     }
 
-    const haveComment = commentsService.findOne(haveArticle, commentId);
+    const commentsByIdArticle = await commentsService.findAll(article.id);
+    const haveComment = commentsByIdArticle.some(({id}) => id === +commentId);
 
     if (!haveComment) {
-      return res.status(HTTP_CODES.BAD_REQUEST).send(`No comment with such id: ${commentId} in article id: ${articleId}`);
+      return res.status(HTTP_CODES.BAD_REQUEST)
+        .send(`Can not delete, no such comment with id: ${commentId} in article id: ${articleId}`);
     }
+    await commentsService.destroy(article.id, commentId);
 
-    commentsService.delete(haveArticle, commentId);
-
-    return res.status(HTTP_CODES.OK).send(`Comment with id: ${commentId}, was successfully deleted from article id: ${articleId}`);
+    return res.status(HTTP_CODES.OK).send(`Comment with id: ${commentId} was successfully deleted from article id: ${articleId}`);
   });
 
-  route.post(`/:articleId/comments`, commentsValidator, (req, res) => {
+  route.post(`/:articleId/comments`, commentsValidator, async (req, res) => {
     const {articleId} = req.params;
     const newComment = req.body;
-    const haveArticle = articlesService.findOne(articleId);
+    const haveArticle = await articlesService.findOne(articleId);
     if (!haveArticle) {
       return res.status(HTTP_CODES.BAD_REQUEST).send(`No article with such id: ${articleId}`);
     }
 
-    const addedComment = commentsService.create(haveArticle, newComment);
+    const addedComment = await commentsService.create(haveArticle, newComment);
 
     return res.status(HTTP_CODES.CREATED).json(addedComment);
   });

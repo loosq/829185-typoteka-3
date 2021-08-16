@@ -1,8 +1,11 @@
 'use strict';
 
+const sequelize = require(`../lib/sequelize`);
+const {getLogger} = require(`../../logger/logger`);
+const initDB = require(`../lib/init-db`);
+
 const {
   DEFAULT_COUNT,
-  FILE_NAME,
   MAXIMUM_SENTENCES_ALLOWED,
   DATE_SHIFT,
   MOCKS_RESTRICTIONS,
@@ -13,10 +16,11 @@ const {
   getRandomInt,
   shuffle,
   correctNounEnding,
-  getRandomDateFromPast
+  getRandomDateFromPast,
+  getRandomSubarray,
+  getPictureFileName
 } = require(`../utils`);
-const {nanoid} = require(`nanoid`);
-const {writeFile, readFile} = require(`fs/promises`);
+const {readFile} = require(`fs/promises`);
 const chalk = require(`chalk`);
 const titlesPath = `./data/titles.txt`;
 const categoriesPath = `./data/categories.txt`;
@@ -33,47 +37,54 @@ const readContent = async (filePath) => {
   }
 };
 
-const generateOffers = (options) => {
+const generateArticles = (options) => {
   const {count, titles, categories, sentences, comments} = options;
   return Array(count).fill({}).map(() => ({
-    id: nanoid(),
     title: titles[getRandomInt(0, titles.length - 1)],
     createdDate: getRandomDateFromPast(DATE_SHIFT),
     announce: shuffle(sentences).slice(1, MAXIMUM_SENTENCES_ALLOWED).join(` `),
     fullText: shuffle(sentences).slice(1, sentences.length).join(` `),
-    categories: [categories[getRandomInt(0, categories.length - 1)]],
+    picture: getPictureFileName(getRandomInt(1, 10)),
+    categories: getRandomSubarray(categories),
     comments: Array(getRandomInt(1, MAXIMUM_COMMENTS)).fill({}).map(() => ({
-      id: nanoid(),
-      text: shuffle(comments).slice(1, sentences.length).join(` `)
+      name: shuffle(comments).slice(1, getRandomInt(1, comments.length)).join(` `)
     }))
   }));
 };
+const logger = getLogger();
 
 module.exports = {
-  name: `--generate`,
+  name: `--filldb`,
   async run(args) {
 
     const [count] = args;
-    const countPosts = Number.parseInt(count, 10) || DEFAULT_COUNT;
+    const countArticles = Number.parseInt(count, 10) || DEFAULT_COUNT;
 
-    if (countPosts > MOCKS_RESTRICTIONS.MAX) {
+    try {
+      logger.info(`Trying to connect to database...`);
+      await sequelize.authenticate();
+    } catch (err) {
+      logger.error(`An error occurred: ${err.message}`);
+      process.exit(1);
+    }
+    logger.info(`Connection to database established`);
+
+    if (countArticles > MOCKS_RESTRICTIONS.MAX) {
       return console.info(chalk.red(`Не больше ${MOCKS_RESTRICTIONS.MAX} ${correctNounEnding(MOCKS_RESTRICTIONS.MAX, [`пост`, `поста`, `постов`])}`));
     } else {
+      const categories = await readContent(categoriesPath);
       const options = {
-        count: countPosts,
+        count: countArticles,
         titles: await readContent(titlesPath),
-        categories: await readContent(categoriesPath),
         sentences: await readContent(sentencesPath),
-        comments: await readContent(commentsPath)
+        comments: await readContent(commentsPath),
+        categories
       };
-      const content = JSON.stringify(generateOffers(options));
+      const articles = generateArticles(options);
 
-      try {
-        await writeFile(FILE_NAME, content);
-        return console.info(chalk.green(`Operation success. File created.`));
-      } catch (e) {
-        return console.error(chalk.red(`Can't write data to file...${e.message}`));
-      }
+      await initDB(sequelize, {categories, articles});
+
+      return console.info(chalk.green(`Operation success. Database is created.`));
     }
   }
 };

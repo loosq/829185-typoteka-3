@@ -1,13 +1,27 @@
-'use strict';
+"use strict";
+
+const {Op} = require(`sequelize`);
+const Alias = require(`../service/models/alias`);
 
 class SearchService {
-  constructor(articles) {
-    this.articles = articles || [];
+  constructor(sequelize) {
+    this._Article = sequelize.models.Article;
   }
 
-  findAll(searchPhrase) {
-    return this.articles.filter(({title}) => title.toLowerCase().includes(String(searchPhrase).toLowerCase()));
+  async findAll(searchText) {
+
+    const articles = await this._Article.findAll({
+      where: {
+        title: {
+          [Op.substring]: searchText
+        }
+      },
+      include: [Alias.CATEGORIES],
+    });
+
+    return articles.map((article) => article.get());
   }
+
 }
 
 module.exports = SearchService;

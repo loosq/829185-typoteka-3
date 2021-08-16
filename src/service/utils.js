@@ -57,20 +57,23 @@ const getMocks = async (fileName) => {
   }
 };
 
-const countCategoriesToArticles = (articles) => {
-  let result = {};
-  if (Array.isArray(articles)) {
-    articles.forEach((article) => article.categories.forEach((category) => {
-      result[category] = category in result ? result[category] + 1 : 1;
-    }));
-  }
-
-  return result;
-};
-
 const mostPopularArticles = (articles) => Array.isArray(articles) && articles.sort((a, b) => b.comments.length - a.comments.length);
 
 const getPictureFileName = (count) => `item${count < 10 ? `0${count}` : count}.jpg`;
+
+const getRandomSubarray = (items) => {
+  items = items.slice();
+  let count = getRandomInt(1, items.length - 1);
+  let result = [];
+  while (count--) {
+    result.push(
+        ...items.splice(
+            getRandomInt(0, items.length - 1), 1
+        )
+    );
+  }
+  return result;
+};
 
 module.exports = {
   shuffle,
@@ -79,7 +82,7 @@ module.exports = {
   getRandomDateFromPast,
   getMocks,
   getCurrentDate,
-  countCategoriesToArticles,
   mostPopularArticles,
-  getPictureFileName
+  getPictureFileName,
+  getRandomSubarray
 };

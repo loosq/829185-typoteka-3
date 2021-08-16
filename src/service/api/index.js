@@ -1,9 +1,11 @@
 'use strict';
 
 const {Router} = require(`express`);
-const search = require(`../api/search`);
-const categories = require(`../api/categories`);
-const articles = require(`../api/articles`);
+const search = require(`./search`);
+const categories = require(`./categories`);
+const articles = require(`./articles`);
+const sequelize = require(`../lib/sequelize`);
+const defineModels = require(`../models`);
 const app = new Router();
 const {
   SearchService,
@@ -12,12 +14,11 @@ const {
   CommentsService
 } = require(`../../dataServices`);
 
-const initApi = (mocks) => {
-  articles(app, new ArticlesService(mocks), new CommentsService(mocks));
-  categories(app, new CategoriesService(mocks));
-  search(app, new SearchService(mocks));
+defineModels(sequelize);
+(() => {
+  articles(app, new ArticlesService(sequelize), new CommentsService(sequelize));
+  categories(app, new CategoriesService(sequelize));
+  search(app, new SearchService(sequelize));
+})();
 
-  return app;
-};
-
-module.exports = initApi;
+module.exports = app;
