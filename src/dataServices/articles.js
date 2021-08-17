@@ -43,6 +43,21 @@ class ArticlesService {
     });
     return !!affectedRows;
   }
+
+  async findPage({limit, offset, comments}) {
+    const include = [Alias.CATEGORIES];
+    if (comments) {
+      include.push(Alias.COMMENTS);
+    }
+
+    const {count, rows} = await this._Article.findAndCountAll({
+      limit,
+      offset,
+      include,
+      distinct: true
+    });
+    return {count, articles: rows};
+  }
 }
 
 module.exports = ArticlesService;
