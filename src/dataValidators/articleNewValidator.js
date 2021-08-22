@@ -16,7 +16,6 @@ const extendedArticleSchema = articleBaseSchema.keys({
 
 module.exports = (req, res, next) => {
   const {error} = extendedArticleSchema.validate(req.body);
-  console.log(req.body)
 
   if (error) {
     return res.status(HTTP_CODES.BAD_REQUEST)
