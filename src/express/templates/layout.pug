@@ -14,7 +14,17 @@ html(lang='ru')
       a.active {
         pointer-events: none;
       }
+      .server-error {
+        border-radius: 10px;
+        color: white;
+        background-color: tomato;
+        margin: 20px 0;
+        padding: 10px;
+      }
   body
+    mixin errorMessage(message)
+      if message
+        .server-error= message
     mixin pagination(page, totalPages, width, prefix)
       -
         let start = page - width;

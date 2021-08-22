@@ -2,11 +2,12 @@
 
 const searchValidator = require(`./searchValidator`);
 const commentsValidator = require(`./commentsValidator`);
-const {validateArticleAttr, validateNewArticle} = require(`./articlesValidator`);
+const articleNewAttrValidator = require(`./articleNewAttrValidator`);
+const articleNewValidator = require(`./articleNewValidator`);
 
 module.exports = {
   searchValidator,
-  validateArticleAttr,
-  validateNewArticle,
+  articleNewValidator,
+  articleNewAttrValidator,
   commentsValidator
 };

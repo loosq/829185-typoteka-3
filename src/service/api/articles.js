@@ -3,8 +3,8 @@
 const Router = require(`express`);
 const route = new Router();
 const {
-  validateArticleAttr,
-  validateNewArticle,
+  articleNewValidator,
+  articleNewAttrValidator,
   commentsValidator
 } = require(`../../dataValidators`);
 const {HTTP_CODES} = require(`../../service/constants`);
@@ -16,7 +16,7 @@ module.exports = (app, articlesService, commentsService) => {
     const {offset, limit, comments} = req.query;
     let result;
 
-    if (limit || offset) {
+    if (+limit || +offset) {
       result = await articlesService.findPage({limit, offset, comments});
     } else {
       result = await articlesService.findAll(comments);
@@ -38,13 +38,13 @@ module.exports = (app, articlesService, commentsService) => {
     return res.status(HTTP_CODES.OK).json(haveArticle);
   });
 
-  route.post(`/`, validateNewArticle, async (req, res) => {
+  route.post(`/`, articleNewValidator, async (req, res) => {
     const newArticle = await articlesService.create(req.body);
 
     return res.status(HTTP_CODES.CREATED).json(newArticle);
   });
 
-  route.put(`/:articleId`, validateArticleAttr, (req, res) => {
+  route.put(`/:articleId`, articleNewAttrValidator, (req, res) => {
 
     const {articleId} = req.params;
     const haveArticle = articlesService.findOne(articleId);
@@ -106,6 +106,7 @@ module.exports = (app, articlesService, commentsService) => {
     const {articleId} = req.params;
     const newComment = req.body;
     const haveArticle = await articlesService.findOne(articleId);
+
     if (!haveArticle) {
       return res.status(HTTP_CODES.BAD_REQUEST).send(`No article with such id: ${articleId}`);
     }

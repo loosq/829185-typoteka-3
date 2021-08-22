@@ -18,7 +18,7 @@ class API {
     return response.data;
   }
 
-  getArticles({offset, limit, comments}) {
+  getArticles({offset, limit, comments} = {offset: 0, limit: 0, comments: false}) {
     return this._load(`/articles`, {params: {offset, limit, comments}});
   }
 
