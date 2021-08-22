@@ -1,15 +1,17 @@
 'use strict';
 
-const {HTTP_CODES} = require(`../service/constants`);
 const Joi = require(`joi`);
-const minCommentLength = 20;
+const {HTTP_CODES} = require(`../service/constants`);
+const minArticleId = 1;
+const minCommentId = 1;
 
 const schema = Joi.object({
-  name: Joi.string().min(minCommentLength).required()
+  articleId: Joi.number().integer().min(minArticleId),
+  commentId: Joi.number().integer().min(minCommentId)
 });
 
 module.exports = (req, res, next) => {
-  const {error} = schema.validate(req.body);
+  const error = schema.validate(req.body);
 
   if (!error) {
     return res.status(HTTP_CODES.BAD_REQUEST).send(error.details.map((err) => err.message).join(`\n`));

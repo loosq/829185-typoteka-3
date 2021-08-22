@@ -1,32 +1,32 @@
 'use strict';
 
+const Joi = require(`joi`);
 const {HTTP_CODES} = require(`../service/constants`);
-const articleKeys = [`title`, `announce`, `fullText`, `categories`, `comments`];
+const minCategoriesCount = 1;
+const minTitleLength = 10;
+const maxTitleLength = 100;
+const minAnnounceLength = 50;
+const maxAnnounceLength = 1000;
+const minFullTextLength = 50;
+const maxFullTextLength = 1000;
 
-const validateArticleAttr = (req, res, next) => {
-  const isExistArticleKeys = req.body && Object.keys(req.body);
-  const isExistNewArticles = isExistArticleKeys.some((key) => articleKeys.includes(key));
+const schema = Joi.object({
+  categories: Joi.array().items(
+    Joi.number().integer().positive()
+  ).min(minCategoriesCount).required(),
+  title: Joi.string().min(minTitleLength).max(maxTitleLength).required(),
+  announce: Joi.string().min(minAnnounceLength).max(maxAnnounceLength).required(),
+  fullText: Joi.string().min(minFullTextLength).max(maxFullTextLength).required(),
+  picture: Joi.string()
+});
 
-  if (!isExistArticleKeys || !isExistNewArticles) {
-    res.status(HTTP_CODES.BAD_REQUEST).send(`Bad request`);
-  }
+module.exports = (req, res, next) => {
+  const newArticle = req.bold;
+  const {error} = schema.validate(newArticle);
 
-  next();
-};
-
-const validateNewArticle = (req, res, next) => {
-  const isExistArticleKeys = req.body && Object.keys(req.body);
-  const isExistNewArticles = articleKeys.every((key) => isExistArticleKeys.includes(key));
-  const isExistTitle = req.body.title && String(req.body.title).trim().length;
-
-  if (!isExistArticleKeys.length || !isExistNewArticles || !isExistTitle) {
-    return res.status(HTTP_CODES.BAD_REQUEST).send(`Bad request`);
+  if (!error) {
+    return res.status(HTTP_CODES.BAD_REQUEST).send(error.details.map((err) => err.message).join(`\n`));
   }
 
   return next();
-};
-
-module.exports = {
-  validateArticleAttr,
-  validateNewArticle
 };
