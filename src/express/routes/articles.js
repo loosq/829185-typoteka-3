@@ -88,21 +88,16 @@ articlesRouter.get(`/:id`, async (req, res) => {
 
   res.render(`post-user`, {article, error});
 });
-articlesRouter.get(`/:id`, async (req, res) => {
-  const {id} = req.params;
-  const offer = await api.getArticle(id, true);
-  res.render(`offers/ticket`, {offer, id});
-});
 
 articlesRouter.post(`/:id/comments`, async (req, res) => {
   const {id} = req.params;
   const {comment} = req.body;
 
   try {
-    await api.createComment(id, {text: comment});
-    res.redirect(`/offers/${id}`);
+    await api.createComment(id, {name: comment});
+    res.redirect(`/articles/${id}`);
   } catch (error) {
-    res.redirect(`/offers/${id}?error=${encodeURIComponent(error.response.data)}`);
+    res.redirect(`/articles/${id}?error=${encodeURIComponent(error.response.data)}`);
   }
 });
 
