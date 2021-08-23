@@ -10,7 +10,7 @@ const extendedArticleSchema = articleBaseSchema.keys({
   fullText: Joi.required(),
   announce: Joi.required(),
   categories: Joi.array().items(
-    Joi.number().integer().positive()
+      Joi.number().integer().positive()
   ).min(minCategoriesCount).required()
 });
 

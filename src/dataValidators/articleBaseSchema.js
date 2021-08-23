@@ -1,5 +1,6 @@
+'use strict';
+
 const Joi = require(`joi`);
-const minCategoriesCount = 1;
 const minTitleLength = 10;
 const maxTitleLength = 100;
 const minAnnounceLength = 50;

@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 const articlesRouter = new Router();
-const {mostPopularArticles, getCurrentDate} = require(`../../service/utils`);
+const {mostPopularArticles} = require(`../../service/utils`);
 const api = require(`../api`).getAPI();
 const {nanoid} = require(`nanoid`);
 const path = require(`path`);
@@ -50,26 +50,24 @@ articlesRouter.get(`/`, async (req, res) => {
   res.render(`main`, {articles, categoriesToArticles, lastCommentedArticles, sortedArticles, page, totalPages});
 });
 articlesRouter.get(`/categories/:id`, (req, res) => res.send(`/category/:id ${req.params.id}`));
-let categories;
 articlesRouter.get(`/add`, async (req, res) => {
   const {error} = req.query;
   const categories = await api.getCategories();
 
   res.render(`admin-add-new-post-empty`, {categories, error});
 });
-
 articlesRouter.post(`/add`,
     upload.single(`upload`),
     async (req, res) => {
       const {body, file} = req;
-      const {title,announcement, categories, fullText} = body;
+      const {title, announcement, categories, fullText} = body;
 
       const article = {
-        title: title,
+        title,
         picture: file && file.filename,
         announce: announcement,
-        fullText: fullText,
-        categories: categories
+        fullText,
+        categories
       };
 
       try {
@@ -86,8 +84,26 @@ articlesRouter.get(`/edit/:id`, async (req, res) => {
 });
 articlesRouter.get(`/:id`, async (req, res) => {
   const article = await api.getArticle(req.params.id, true);
+  const {error} = req.query;
 
-  res.render(`post-user`, {article});
+  res.render(`post-user`, {article, error});
+});
+articlesRouter.get(`/:id`, async (req, res) => {
+  const {id} = req.params;
+  const offer = await api.getArticle(id, true);
+  res.render(`offers/ticket`, {offer, id});
+});
+
+articlesRouter.post(`/:id/comments`, async (req, res) => {
+  const {id} = req.params;
+  const {comment} = req.body;
+
+  try {
+    await api.createComment(id, {text: comment});
+    res.redirect(`/offers/${id}`);
+  } catch (error) {
+    res.redirect(`/offers/${id}?error=${encodeURIComponent(error.response.data)}`);
+  }
 });
 
 module.exports = articlesRouter;
