@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 const articlesRouter = new Router();
-const {mostPopularArticles, getCurrentDate} = require(`../../service/utils`);
+const {mostPopularArticles} = require(`../../service/utils`);
 const api = require(`../api`).getAPI();
 const {nanoid} = require(`nanoid`);
 const path = require(`path`);
@@ -40,7 +40,6 @@ articlesRouter.get(`/`, async (req, res) => {
     api.getCategories(true)
   ]);
 
-  console.log(articles);
   const sortedArticles = mostPopularArticles(articles);
   // TODO добавить в коммент дату и сортировать по ней
   const lastCommentedArticles = sortedArticles.slice(0, 3);
@@ -51,43 +50,32 @@ articlesRouter.get(`/`, async (req, res) => {
   res.render(`main`, {articles, categoriesToArticles, lastCommentedArticles, sortedArticles, page, totalPages});
 });
 articlesRouter.get(`/categories/:id`, (req, res) => res.send(`/category/:id ${req.params.id}`));
-let categories;
 articlesRouter.get(`/add`, async (req, res) => {
+  const {error} = req.query;
+  const categories = await api.getCategories();
 
-  if (!categories) {
-    categories = await api.getCategories();
-  }
-  res.render(`admin-add-new-post-empty`, {categories});
+  res.render(`admin-add-new-post-empty`, {categories, error});
 });
-
 articlesRouter.post(`/add`,
     upload.single(`upload`),
     async (req, res) => {
       const {body, file} = req;
+      const {title, announcement, categories, fullText} = body;
 
-      if (body && body.categories) {
-        categories = body.categories;
-      }
-
-      // TODO как реализовать добавление категорий?
-      // Категории. Обязательно для выбора одна категория;
-      let article = {
-        title: req.body.title,
-        fileName: file && file.originalname || ``,
-        announce: req.body.announcement || ``,
-        fullText: req.body.fullText || ``,
-        createdDate: getCurrentDate(),
-        categories,
-        comments: []
+      const article = {
+        title,
+        picture: file && file.filename,
+        announce: announcement,
+        fullText,
+        categories
       };
 
       try {
         await api.createArticle(article);
         res.redirect(`/my`);
-      } catch (e) {
-        res.render(`admin-add-new-post`, {article});
+      } catch (error) {
+        res.redirect(`/articles/add?error=${encodeURIComponent(error.response.data)}`);
       }
-
     });
 articlesRouter.get(`/edit/:id`, async (req, res) => {
   const article = await api.getArticle(req.params.id);
@@ -95,10 +83,27 @@ articlesRouter.get(`/edit/:id`, async (req, res) => {
   res.render(`admin-add-new-post`, {article});
 });
 articlesRouter.get(`/:id`, async (req, res) => {
-
   const article = await api.getArticle(req.params.id, true);
-  console.log(article);
-  res.render(`post-user`, {article});
+  const {error} = req.query;
+
+  res.render(`post-user`, {article, error});
+});
+articlesRouter.get(`/:id`, async (req, res) => {
+  const {id} = req.params;
+  const offer = await api.getArticle(id, true);
+  res.render(`offers/ticket`, {offer, id});
+});
+
+articlesRouter.post(`/:id/comments`, async (req, res) => {
+  const {id} = req.params;
+  const {comment} = req.body;
+
+  try {
+    await api.createComment(id, {text: comment});
+    res.redirect(`/offers/${id}`);
+  } catch (error) {
+    res.redirect(`/offers/${id}?error=${encodeURIComponent(error.response.data)}`);
+  }
 });
 
 module.exports = articlesRouter;

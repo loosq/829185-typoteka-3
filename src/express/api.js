@@ -18,7 +18,7 @@ class API {
     return response.data;
   }
 
-  getArticles({offset, limit, comments}) {
+  getArticles({offset, limit, comments} = {offset: 0, limit: 0, comments: false}) {
     return this._load(`/articles`, {params: {offset, limit, comments}});
   }
 
@@ -37,6 +37,20 @@ class API {
 
   async createArticle(data) {
     return this._load(`/articles`, {
+      method: `POST`,
+      data
+    });
+  }
+
+  editArticle(id, data) {
+    return this._load(`/articles/${id}`, {
+      method: `PUT`,
+      data
+    });
+  }
+
+  createComment(id, data) {
+    return this._load(`/articles/${id}/comments`, {
       method: `POST`,
       data
     });

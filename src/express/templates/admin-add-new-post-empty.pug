@@ -18,6 +18,7 @@ block content
             a.popup__button.button.button--popup-close(aria-label='Закрыть окно') Закрыть окно
             .new-publication__form.form
               .form__wrapper.form__wrapper--intro
+                +errorMessage(error)
                 .form__field
                   label
                     input(type='text', name='title', placeholder='Заголовок', required)
@@ -31,8 +32,8 @@ block content
                 .new-publication__category-wrapper
                   each category in categories
                     .new-publication__checkbox.new-publication__checkbox--auto
-                      input(type='checkbox', name='checkboxes', id=`${category}`, value=`${category}`)
-                      label(for=`${category}`) #{category}
+                      input(type='checkbox', name='categories', id=`category-${category.id}`, value=`${category.id}`)
+                      label(for=`category-${category.id}`) #{category.name}
                   a.new-publication__form-link.button.button--transparent(href='#') Добавить категорию
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
