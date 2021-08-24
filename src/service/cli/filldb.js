@@ -3,6 +3,7 @@
 const sequelize = require(`../lib/sequelize`);
 const {getLogger} = require(`../../logger/logger`);
 const initDB = require(`../lib/init-db`);
+const passwordUtils = require(`../lib/password`);
 
 const {
   DEFAULT_COUNT,
@@ -38,8 +39,9 @@ const readContent = async (filePath) => {
 };
 
 const generateArticles = (options) => {
-  const {count, titles, categories, sentences, comments} = options;
+  const {count, titles, categories, sentences, comments, users} = options;
   return Array(count).fill({}).map(() => ({
+    user: users[getRandomInt(0, users.length - 1)].email,
     title: titles[getRandomInt(0, titles.length - 1)],
     createdDate: getRandomDateFromPast(DATE_SHIFT),
     announce: shuffle(sentences).slice(1, MAXIMUM_SENTENCES_ALLOWED).join(` `),
@@ -47,7 +49,8 @@ const generateArticles = (options) => {
     picture: getPictureFileName(getRandomInt(1, 10)),
     categories: getRandomSubarray(categories),
     comments: Array(getRandomInt(1, MAXIMUM_COMMENTS)).fill({}).map(() => ({
-      name: shuffle(comments).slice(1, getRandomInt(1, comments.length)).join(` `)
+      user: users[getRandomInt(0, users.length - 1)].email,
+      name: shuffle(comments).slice(0, getRandomInt(0, comments.length - 1)).join(` `)
     }))
   }));
 };
@@ -73,16 +76,32 @@ module.exports = {
       return console.info(chalk.red(`Не больше ${MOCKS_RESTRICTIONS.MAX} ${correctNounEnding(MOCKS_RESTRICTIONS.MAX, [`пост`, `поста`, `постов`])}`));
     } else {
       const categories = await readContent(categoriesPath);
+      const users = [
+        {
+          name: `Иван Иванов`,
+          email: `ivanov@example.com`,
+          passwordHash: await passwordUtils.hash(`ivanov`),
+          avatar: `avatar01.jpg`
+        },
+        {
+          name: `Пётр Петров`,
+          email: `petrov@example.com`,
+          passwordHash: await passwordUtils.hash(`petrov`),
+          avatar: `avatar02.jpg`
+        }
+      ];
+
       const options = {
         count: countArticles,
         titles: await readContent(titlesPath),
         sentences: await readContent(sentencesPath),
         comments: await readContent(commentsPath),
-        categories
+        categories,
+        users
       };
       const articles = generateArticles(options);
 
-      await initDB(sequelize, {categories, articles});
+      await initDB(sequelize, {categories, articles, users});
 
       return console.info(chalk.green(`Operation success. Database is created.`));
     }

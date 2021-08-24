@@ -9,6 +9,7 @@ const minFullTextLength = 50;
 const maxFullTextLength = 2000;
 
 const articleBaseSchema = Joi.object({
+  user: Joi.string().email(),
   categories: Joi.array(),
   title: Joi.string().min(minTitleLength).max(maxTitleLength),
   announce: Joi.string().min(minAnnounceLength).max(maxAnnounceLength),

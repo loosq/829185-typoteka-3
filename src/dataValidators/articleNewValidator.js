@@ -6,6 +6,7 @@ const articleBaseSchema = require(`./articleBaseSchema`);
 const minCategoriesCount = 1;
 
 const extendedArticleSchema = articleBaseSchema.keys({
+  user: Joi.required(),
   title: Joi.required(),
   fullText: Joi.required(),
   announce: Joi.required(),

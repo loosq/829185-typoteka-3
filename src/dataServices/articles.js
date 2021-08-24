@@ -7,6 +7,7 @@ class ArticlesService {
     this._Article = sequelize.models.Article;
     this._Comment = sequelize.models.Comment;
     this._Category = sequelize.models.Category;
+    this._User = sequelize.models.User;
   }
 
   async create(articleData) {
@@ -24,15 +25,32 @@ class ArticlesService {
 
   async findAll(needComments) {
     const include = [Alias.CATEGORIES];
+
     if (needComments) {
-      include.push(Alias.COMMENTS);
+      include.push([Alias.COMMENTS, {
+        model: this._User,
+        as: Alias.USER,
+        attributes: {
+          exclude: [`passwordHash`]
+        }
+      }]);
     }
     const articles = await this._Article.findAll({include});
     return articles.map((item) => item.get());
   }
 
   findOne(id, needComments) {
-    const options = needComments ? [Alias.CATEGORIES, Alias.COMMENTS] : [Alias.CATEGORIES];
+    let options = [Alias.CATEGORIES, {
+      model: this._User,
+      as: Alias.USER,
+      attributes: {
+        exclude: [`passwordHash`]
+      }
+    }];
+
+    if (needComments) {
+      options.push(Alias.COMMENTS);
+    }
 
     return this._Article.findByPk(id, {include: options});
   }
