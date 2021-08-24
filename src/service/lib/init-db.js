@@ -4,11 +4,9 @@ const defineModels = require(`../models`);
 const Alias = require(`../models/alias`);
 
 module.exports = async (sequelize, {categories, articles, users}) => {
-
   const {Category, Article, User} = defineModels(sequelize);
   await sequelize.sync({force: true});
   const userModels = await User.bulkCreate(users, {include: [Alias.ARTICLES, Alias.COMMENTS]});
-
   const userIdByEmail = userModels.reduce((acc, next) => ({
     [next.email]: next.id,
     ...acc

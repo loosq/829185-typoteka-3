@@ -47,7 +47,7 @@ class ArticlesService {
         exclude: [`passwordHash`]
       }
     }];
-    
+
     if (needComments) {
       options.push(Alias.COMMENTS);
     }

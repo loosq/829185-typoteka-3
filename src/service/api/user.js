@@ -1,5 +1,6 @@
 'use strict';
 
+const Router = require(`express`);
 const {userValidator} = require(`../../dataValidators`);
 const {HTTP_CODES} = require(`../constants`);
 const passwordUtils = require(`../lib/password`);

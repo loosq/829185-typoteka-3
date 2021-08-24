@@ -7,7 +7,6 @@ const minCommentId = 1;
 const articleBaseSchema = require(`./articleBaseSchema`);
 
 const schemaArticle = Joi.object({
-  userId: Joi.number().integer().positive().required(),
   articleId: Joi.number().integer().min(minArticleId),
   commentId: Joi.number().integer().min(minCommentId)
 });

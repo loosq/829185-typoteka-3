@@ -7,7 +7,7 @@ const Sequelize = require(`sequelize`);
 const initDB = require(`../lib/init-db`);
 const search = require(`./search`);
 const SearchService = require(`../../dataServices/search`);
-const {mockCategories, validArticles} = require(`./test_mocks`);
+const {mockCategories, validArticles, users} = require(`./test_mocks`);
 const {HTTP_CODES} = require(`../constants`);
 
 
@@ -17,7 +17,7 @@ const createAPI = async () => {
   const app = express();
   app.use(express.json());
 
-  await initDB(mockDB, {categories, articles: validArticles});
+  await initDB(mockDB, {categories, articles: validArticles, users});
   search(app, new SearchService(mockDB));
 
   return app;

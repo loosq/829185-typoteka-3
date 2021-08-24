@@ -9,7 +9,8 @@ const {
   validComment,
   invalidComment,
   emptyComment,
-  mockCategories
+  mockCategories,
+  users
 } = require(`./test_mocks`);
 
 const express = require(`express`);
@@ -28,7 +29,7 @@ const createAPI = async () => {
   const app = express();
   app.use(express.json());
 
-  await initDB(mockDB, {categories, articles: validArticles});
+  await initDB(mockDB, {categories, articles: validArticles, users});
   articles(app, new ArticleService(mockDB), new CommentsService(mockDB));
 
   return app;

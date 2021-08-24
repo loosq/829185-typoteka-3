@@ -1,3 +1,5 @@
+'use strict';
+
 class UserService {
   constructor(sequelize) {
     this._User = sequelize.models.User;
