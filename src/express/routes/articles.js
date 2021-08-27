@@ -18,17 +18,21 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({storage});
+const csrf = require(`csurf`);
+const csrfProtection = csrf();
 
 articlesRouter.get(`/categories/:id`, (req, res) => res.send(`/category/:id ${req.params.id}`));
-articlesRouter.get(`/add`, auth, async (req, res) => {
+articlesRouter.get(`/add`, auth, csrfProtection, async (req, res) => {
   const {error} = req.query;
   const categories = await api.getCategories();
+  const user = req.session;
 
-  res.render(`admin-add-new-post-empty`, {categories, error});
+  res.render(`admin-add-new-post-empty`, {categories, error, user, csrfToken: req.csrfToken()});
 });
 articlesRouter.post(`/add`,
     auth,
     upload.single(`upload`),
+    csrfProtection,
     async (req, res) => {
       const {body, file} = req;
       const {title, announcement, categories, fullText} = body;
@@ -48,16 +52,16 @@ articlesRouter.post(`/add`,
         res.redirect(`/articles/add?error=${encodeURIComponent(error.response.data)}`);
       }
     });
-articlesRouter.get(`/edit/:id`, auth, async (req, res) => {
+articlesRouter.get(`/edit/:id`, auth, csrfProtection, async (req, res) => {
   const article = await api.getArticle(req.params.id);
+  const user = req.session;
 
-  res.render(`admin-add-new-post`, {article});
+  res.render(`admin-add-new-post`, {article, user, csrfToken: req.csrfToken()});
 });
 articlesRouter.get(`/:id`, async (req, res) => {
   const article = await api.getArticle(req.params.id, true);
   const {error} = req.query;
   const {user} = req.session;
-  console.log(article)
   res.render(`post-user`, {article, error, user});
 });
 articlesRouter.get(`/:id`, async (req, res) => {

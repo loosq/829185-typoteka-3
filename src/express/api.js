@@ -65,7 +65,7 @@ class API {
 
   auth(email, password) {
     return this._load(`/user/auth`, {
-      method: 'POST',
+      method: `POST`,
       data: {email, password}
     });
   }

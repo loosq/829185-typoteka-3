@@ -12,7 +12,7 @@ const {
   articlesRoutes
 } = require(`./routes`);
 const sequelize = require(`../service/lib/sequelize`);
-const session = require("express-session");
+const session = require(`express-session`);
 const SequelizeStore = require(`connect-session-sequelize`)(session.Store);
 
 const mySessionStore = new SequelizeStore({
@@ -24,7 +24,7 @@ const mySessionStore = new SequelizeStore({
 sequelize.sync({force: false});
 
 const {SESSION_SECRET} = process.env;
-if(!SESSION_SECRET){
+if (!SESSION_SECRET) {
   throw new Error(`SESSION_SECRET environment variable is not defined`);
 }
 
