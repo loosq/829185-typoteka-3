@@ -7,13 +7,13 @@ const users = [
     name: `Иван Иванов`,
     email: `ivanov@example.com`,
     passwordHash: `$2b$10$lZ2QE6F48S/c5eLmR32M6OLZkRzYAVo/B3OM4goD/N1Js5lrt5SRS`,
-    avatar: `avatar01.jpg`
+    avatar: `avatar-1.png`
   },
   {
     name: `Пётр Петров`,
     email: `petrov@example.com`,
     passwordHash: `petrov`,
-    avatar: `avatar02.jpg`
+    avatar: `avatar-2.png`
   }
 ];
 
