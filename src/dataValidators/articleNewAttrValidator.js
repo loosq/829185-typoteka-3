@@ -2,13 +2,13 @@
 
 const Joi = require(`joi`);
 const {HTTP_CODES} = require(`../service/constants`);
-const minArticleId = 1;
-const minCommentId = 1;
+const MIN_ARTICLE_ID = 1;
+const MIN_COMMENT_ID = 1;
 const articleBaseSchema = require(`./articleBaseSchema`);
 
 const schemaArticle = Joi.object({
-  articleId: Joi.number().integer().min(minArticleId),
-  commentId: Joi.number().integer().min(minCommentId)
+  articleId: Joi.number().integer().min(MIN_ARTICLE_ID),
+  commentId: Joi.number().integer().min(MIN_COMMENT_ID)
 });
 
 module.exports = (req, res, next) => {

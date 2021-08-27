@@ -2,10 +2,10 @@
 
 const {HTTP_CODES} = require(`../service/constants`);
 const Joi = require(`joi`);
-const minCommentLength = 10;
+const MIN_COMMENT_LENGTH = 10;
 
 const schema = Joi.object().keys({
-  name: Joi.string().min(minCommentLength).required()
+  name: Joi.string().min(MIN_COMMENT_LENGTH).required()
 });
 
 module.exports = (req, res, next) => {
