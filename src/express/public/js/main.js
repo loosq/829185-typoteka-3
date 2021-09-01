@@ -329,10 +329,12 @@ if (typeof window === 'undefined' || typeof window.getComputedStyle !== 'functio
 // }
 
 // Обработчик на кнопку "Новая запись" в хэдэре
-(function handleNewArticleButtonClick() {
+const handleNewArticleButtonClick = function() {
   const newArticleButton = document.querySelector(`.header__button-new`)
   if (newArticleButton) {
-    const createNewArticleUrl = `/articles/add`;
-    newArticleButton.addEventListener(`click`, () => document.location = createNewArticleUrl);
+    const newArticleUrl = `/articles/add`;
+    newArticleButton.addEventListener(`click`, () => document.location = newArticleUrl);
   }
-})()
+}
+
+handleNewArticleButtonClick();
