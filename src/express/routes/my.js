@@ -3,19 +3,19 @@
 const {Router} = require(`express`);
 const myRouter = new Router();
 const api = require(`../api`).getAPI();
+const auth = require(`../middlewares/auth`);
 
-myRouter.get(`/`, async (req, res) => {
+myRouter.get(`/`, auth, async (req, res) => {
   const articles = await api.getArticles();
-  res.render(`admin-publications`, {articles});
+  const user = req.session;
+
+  res.render(`admin-publications`, {articles, user});
 });
-myRouter.get(`/comments`, async (req, res) => {
+myRouter.get(`/comments`, auth, async (req, res) => {
   const articles = await api.getArticles();
+  const user = req.session;
 
-  /** TODO уточнить у наставника. В задании написано что нужно запрашивать ресурс /api/comments, это комменты ко всем публикациям?
-   * судя по шаблону, хотим получить комменты авторизовавшегося пользователя, возможно доработать это после внедрения автаризации
-   * */
-
-  res.render(`admin-comments.pug`, {articles});
+  res.render(`admin-comments.pug`, {articles, user});
 });
 
 module.exports = myRouter;

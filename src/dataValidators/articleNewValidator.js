@@ -3,7 +3,7 @@
 const Joi = require(`joi`);
 const {HTTP_CODES} = require(`../service/constants`);
 const articleBaseSchema = require(`./articleBaseSchema`);
-const minCategoriesCount = 1;
+const MIN_CATEGORIES_COUNT = 1;
 
 const extendedArticleSchema = articleBaseSchema.keys({
   user: Joi.required(),
@@ -12,7 +12,7 @@ const extendedArticleSchema = articleBaseSchema.keys({
   announce: Joi.required(),
   categories: Joi.array().items(
       Joi.number().integer().positive()
-  ).min(minCategoriesCount).required()
+  ).min(MIN_CATEGORIES_COUNT).required()
 });
 
 module.exports = (req, res, next) => {

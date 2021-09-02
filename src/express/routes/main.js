@@ -2,9 +2,33 @@
 
 const {Router} = require(`express`);
 const mainRouter = new Router();
+const {mostPopularArticles} = require(`../../service/utils`);
 const api = require(`../api`).getAPI();
 const upload = require(`../middlewares/upload`);
 
+const ARTICLES_PER_PAGE = 4;
+
+mainRouter.get(`/`, async (req, res) => {
+  // получаем номер страницы
+  let {page = 1} = req.query;
+  page = +page;
+  const limit = ARTICLES_PER_PAGE;
+  const offset = (page - 1) * ARTICLES_PER_PAGE;
+  const [
+    {count, articles},
+    categoriesToArticles
+  ] = await Promise.all([
+    api.getArticles({limit, offset, comments: true}),
+    api.getCategories(true)
+  ]);
+
+  const sortedArticles = mostPopularArticles(articles);
+  const lastCommentedArticles = sortedArticles.slice(0, 3);
+  const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
+  const {user} = req.session;
+
+  res.render(`main`, {articles, categoriesToArticles, lastCommentedArticles, sortedArticles, page, totalPages, user});
+});
 mainRouter.get(`/login`, (req, res) => res.render(`login.pug`));
 mainRouter.get(`/search`, async (req, res) => {
 
@@ -28,7 +52,6 @@ mainRouter.get(`/register`, (req, res) => {
   const {error} = req.query;
   res.render(`register`, {error});
 });
-
 mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
   const {body, file} = req;
   const userData = {
@@ -43,6 +66,23 @@ mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
     res.redirect(`/login`);
   } catch (error) {
     res.redirect(`/register?error=${encodeURIComponent(error.response.data)}`);
+  }
+});
+mainRouter.get(`/login`, (req, res) => {
+  const {error} = req.query;
+  res.render(`login`, {error});
+});
+mainRouter.get(`/logout`, (req, res) => {
+  delete req.session.user;
+  res.redirect(`/`);
+});
+mainRouter.post(`/login`, async (req, res) => {
+  try {
+    const user = await api.auth(req.body[`email`], req.body[`password`]);
+    req.session.user = user;
+    res.redirect(`/`);
+  } catch (error) {
+    res.redirect(`/login?error=${encodeURIComponent(error.response.data)}`);
   }
 });
 

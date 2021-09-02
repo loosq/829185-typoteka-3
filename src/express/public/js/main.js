@@ -327,3 +327,14 @@ if (typeof window === 'undefined' || typeof window.getComputedStyle !== 'functio
 //     autosize(element);
 //   });
 // }
+
+// Обработчик на кнопку "Новая запись" в хэдэре
+const handleNewArticleButtonClick = function() {
+  const newArticleButton = document.querySelector(`.header__button-new`)
+  if (newArticleButton) {
+    const newArticleUrl = `/articles/add`;
+    newArticleButton.addEventListener(`click`, () => document.location = newArticleUrl);
+  }
+}
+
+handleNewArticleButtonClick();

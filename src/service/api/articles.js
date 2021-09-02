@@ -28,7 +28,6 @@ module.exports = (app, articlesService, commentsService) => {
   route.get(`/:articleId`, async (req, res) => {
     const {articleId} = req.params;
     const {needComments} = req.query;
-
     const haveArticle = await articlesService.findOne(articleId, needComments);
 
     if (!haveArticle) {

@@ -24,35 +24,65 @@ class ArticlesService {
   }
 
   async findAll(needComments) {
-    const include = [Alias.CATEGORIES];
-
-    if (needComments) {
-      include.push([Alias.COMMENTS, {
+    const include = [
+      Alias.CATEGORIES,
+      {
         model: this._User,
         as: Alias.USER,
         attributes: {
           exclude: [`passwordHash`]
         }
-      }]);
+      }
+    ];
+
+    if (needComments) {
+      include.push({
+        model: this._Comment,
+        as: Alias.COMMENTS,
+        include: [
+          {
+            model: this._User,
+            as: Alias.USER,
+            attributes: {
+              exclude: [`passwordHash`]
+            }
+          }
+        ]
+      });
     }
     const articles = await this._Article.findAll({include});
     return articles.map((item) => item.get());
   }
 
   findOne(id, needComments) {
-    let options = [Alias.CATEGORIES, {
-      model: this._User,
-      as: Alias.USER,
-      attributes: {
-        exclude: [`passwordHash`]
+    let include = [
+      Alias.CATEGORIES,
+      {
+        model: this._User,
+        as: Alias.USER,
+        attributes: {
+          exclude: [`passwordHash`]
+        }
       }
-    }];
+    ];
 
     if (needComments) {
-      options.push(Alias.COMMENTS);
+      include.push({
+        model: this._Comment,
+        as: Alias.COMMENTS,
+        include: [
+          {
+            model: this._User,
+            as: Alias.USER,
+            attributes: {
+              exclude: [`passwordHash`]
+            }
+          }
+        ]
+      });
     }
 
-    return this._Article.findByPk(id, {include: options});
+    return this._Article.findByPk(id, {include});
   }
 
   async update(id, article) {
