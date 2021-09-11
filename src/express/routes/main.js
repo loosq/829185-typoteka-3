@@ -7,6 +7,7 @@ const api = require(`../api`).getAPI();
 const upload = require(`../middlewares/upload`);
 
 const ARTICLES_PER_PAGE = 4;
+const MAX_COMMENTED_ARTICLES = 3;
 
 mainRouter.get(`/`, async (req, res) => {
   // получаем номер страницы
@@ -21,15 +22,14 @@ mainRouter.get(`/`, async (req, res) => {
     api.getArticles({limit, offset, comments: true}),
     api.getCategories(true)
   ]);
-
+  // TODO написать запросы для наиболе коментируемых и последних откоменченых статей
   const sortedArticles = mostPopularArticles(articles);
-  const lastCommentedArticles = sortedArticles.slice(0, 3);
+  const lastCommentedArticles = sortedArticles.slice(0, MAX_COMMENTED_ARTICLES);
   const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
   const {user} = req.session;
 
   res.render(`main`, {articles, categoriesToArticles, lastCommentedArticles, sortedArticles, page, totalPages, user});
 });
-mainRouter.get(`/login`, (req, res) => res.render(`login.pug`));
 mainRouter.get(`/search`, async (req, res) => {
 
   try {
@@ -70,6 +70,7 @@ mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
 });
 mainRouter.get(`/login`, (req, res) => {
   const {error} = req.query;
+
   res.render(`login`, {error});
 });
 mainRouter.get(`/logout`, (req, res) => {

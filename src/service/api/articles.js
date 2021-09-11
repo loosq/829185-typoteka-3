@@ -110,7 +110,7 @@ module.exports = (app, articlesService, commentsService) => {
       return res.status(HTTP_CODES.BAD_REQUEST).send(`No article with such id: ${articleId}`);
     }
 
-    const addedComment = await commentsService.create(haveArticle, newComment);
+    const addedComment = await commentsService.create(articleId, newComment);
 
     return res.status(HTTP_CODES.CREATED).json(addedComment);
   });

@@ -13,4 +13,4 @@ block content
           .search__result
             each result in results
               time.search__date(datetime=`${result.createdDate}`) #{result.createdDate}
-              a.search__link #{result.title}
+              a.search__link(href=`articles/${result.id}`) #{result.title}

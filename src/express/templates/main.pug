@@ -22,7 +22,7 @@ block content
         ul.hot__list
           each article in sortedArticles
             li.hot__list-item
-              a.hot__list-link(href='#') #{article.title}
+              a.hot__list-link(href=`/articles/${article.id}`) #{article.title}
                 sup.hot__link-sup #{article.comments.length}
       section.main-page__last.last
         h2.last__name
@@ -32,8 +32,8 @@ block content
           each article in lastCommentedArticles
             li.last__list-item
               img.last__list-image(src='img/avatar-small-1.png', width='20', height='20', alt='Аватар пользователя')
-              b.last__list-name Анна Артамонова
-              a.last__list-link(href='#') #{article.comments[article.comments.length - 1].text}
+              b.last__list-name #{article.comments[article.comments.length - 1].userId}
+              a.last__list-link(href=`/articles/${article.id}`) #{article.comments[article.comments.length - 1].name}
     section.main-page__list.preview
       h2.visually-hidden Список превью статей
       ul.preview__list
@@ -44,14 +44,15 @@ block content
                 li.preview__breadcrumbs-item
                   a.preview__breadcrumbs-link(href='#') #{category.name}
             .preview__background
-              img.preview__background-image(src='img/skyscraper@1x.jpg', width='460', height='240', srcset='img/skyscraper@1x.jpg, img/skyscraper@2x.jpg 2x', alt='Фотография небоскреба')
-            time.preview__time(datetime='2019-03-21T20:33') 21.03.2019, 20:33
+              img.preview__background-image(src=`/img/${article.picture}`, width='460', height='240', alt='Картинка поста')
+            time.preview__time(datetime=`${article.createdAt}`) #{article.createdAt}
             h3.preview__name
               a.preview__name-link(href='#') #{article.title}
             p.preview__text #{article.announce}
-            a.preview__comment(href='#')
-              | Комментарии
-              span.preview__cloud
-              |
-              b.preview__comment-count #{article.comments.length}
+            if article.comments.length
+              a.preview__comment(href=`/articles/${article.id}`)
+                | Комментарии
+                span.preview__cloud
+                |
+                b.preview__comment-count #{article.comments.length}
     +pagination(page, totalPages, 2, `?`)

@@ -6,9 +6,9 @@ class CommentsService {
     this._Comment = sequelize.models.Comment;
   }
 
-  create(offerId, comment) {
+  create(articleId, comment) {
     return this._Comment.create({
-      offerId,
+      articleId,
       ...comment
     });
   }
