@@ -9,13 +9,14 @@ myRouter.get(`/`, auth, async (req, res) => {
   const articles = await api.getArticles();
   const user = req.session;
 
-  res.render(`admin-publications`, {articles, user});
+  res.render(`my/my-articles`, {articles, user});
 });
 myRouter.get(`/comments`, auth, async (req, res) => {
   const articles = await api.getArticles();
   const user = req.session;
 
-  res.render(`admin-comments.pug`, {articles, user});
+  // TODO Разобраться какйо контент тут отображать
+  res.render(`my/my-comments`, {articles, user});
 });
 
 module.exports = myRouter;

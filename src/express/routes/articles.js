@@ -27,7 +27,7 @@ articlesRouter.get(`/add`, auth, csrfProtection, async (req, res) => {
   const categories = await api.getCategories();
   const user = req.session;
 
-  res.render(`admin-add-new-post-empty`, {categories, error, user, csrfToken: req.csrfToken()});
+  res.render(`articles/article-add-empty`, {categories, error, user, csrfToken: req.csrfToken()});
 });
 articlesRouter.post(`/add`,
     auth,
@@ -56,13 +56,13 @@ articlesRouter.get(`/edit/:id`, auth, csrfProtection, async (req, res) => {
   const article = await api.getArticle(req.params.id);
   const user = req.session;
 
-  res.render(`admin-add-new-post`, {article, user, csrfToken: req.csrfToken()});
+  res.render(`articles/article-add`, {article, user, csrfToken: req.csrfToken()});
 });
 articlesRouter.get(`/:id`, async (req, res) => {
   const article = await api.getArticle(req.params.id, true);
   const {error} = req.query;
   const {user} = req.session;
-  res.render(`post-user`, {article, error, user});
+  res.render(`articles/article`, {article, error, user});
 });
 
 articlesRouter.post(`/:id/comments`, auth, async (req, res) => {

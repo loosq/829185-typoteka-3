@@ -22,7 +22,7 @@ mainRouter.get(`/`, async (req, res) => {
     api.getArticles({limit, offset, comments: true}),
     api.getCategories(true)
   ]);
-  // TODO написать запросы для наиболе коментируемых и последних откоменченых статей
+  // TODO запросы для самых популярных и наиболее комментируемых статей перенести на вебсокеты
   const sortedArticles = mostPopularArticles(articles);
   const lastCommentedArticles = sortedArticles.slice(0, MAX_COMMENTED_ARTICLES);
   const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
@@ -35,12 +35,12 @@ mainRouter.get(`/search`, async (req, res) => {
   try {
     const {search} = req.query;
     const results = await api.search(search) || [];
-    res.render(`search-${results.length ? `results` : `nothing`}`, {
+    res.render(`search/search-${results.length ? `results` : `nothing`}`, {
       results,
       search
     });
   } catch (error) {
-    res.render(`search-empty`);
+    res.render(`search/search-empty`);
   }
 });
 mainRouter.get(`/comments`, async (req, res) => {
@@ -50,7 +50,7 @@ mainRouter.get(`/comments`, async (req, res) => {
 });
 mainRouter.get(`/register`, (req, res) => {
   const {error} = req.query;
-  res.render(`register`, {error});
+  res.render(`auth/register`, {error});
 });
 mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
   const {body, file} = req;
@@ -71,7 +71,7 @@ mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
 mainRouter.get(`/login`, (req, res) => {
   const {error} = req.query;
 
-  res.render(`login`, {error});
+  res.render(`auth/login`, {error});
 });
 mainRouter.get(`/logout`, (req, res) => {
   delete req.session.user;

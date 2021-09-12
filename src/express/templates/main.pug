@@ -6,53 +6,62 @@ block content
     p.
 
       Это приветственный текст, который владелец блога может выбрать, чтобы описать себя 👏
-
-    section.main-page__theme-list
-      h2.visually-hidden Список тем
-      ul.themes
-        each categories in categoriesToArticles
-          li.themes__item
-            a.themes__item-link(href='#') #{categories.name}
-              sup #{categories.count}
-    .main-page__section-flex
-      section.main-page__hot.hot
-        h2.hot__name
-          | Самое обсуждаемое
-          span.hot__icon.hot__icon--fire
-        ul.hot__list
-          each article in sortedArticles
-            li.hot__list-item
-              a.hot__list-link(href=`/articles/${article.id}`) #{article.title}
-                sup.hot__link-sup #{article.comments.length}
-      section.main-page__last.last
-        h2.last__name
-          | Последние комментарии
-          span.last__icon.last__icon--cloud
-        ul.last__list
-          each article in lastCommentedArticles
-            li.last__list-item
-              img.last__list-image(src='img/avatar-small-1.png', width='20', height='20', alt='Аватар пользователя')
-              b.last__list-name #{article.comments[article.comments.length - 1].userId}
-              a.last__list-link(href=`/articles/${article.id}`) #{article.comments[article.comments.length - 1].name}
-    section.main-page__list.preview
-      h2.visually-hidden Список превью статей
-      ul.preview__list
-        each article in articles
-          li.preview__item
-            ul.preview__breadcrumbs
-              each category in article.categories
-                li.preview__breadcrumbs-item
-                  a.preview__breadcrumbs-link(href='#') #{category.name}
-            .preview__background
-              img.preview__background-image(src=`/img/${article.picture}`, width='460', height='240', alt='Картинка поста')
-            time.preview__time(datetime=`${article.createdAt}`) #{article.createdAt}
-            h3.preview__name
-              a.preview__name-link(href='#') #{article.title}
-            p.preview__text #{article.announce}
-            if article.comments.length
-              a.preview__comment(href=`/articles/${article.id}`)
-                | Комментарии
-                span.preview__cloud
-                |
-                b.preview__comment-count #{article.comments.length}
-    +pagination(page, totalPages, 2, `?`)
+    if articles
+      section.main-page__theme-list
+        h2.visually-hidden Список тем
+        ul.themes
+          each categories in categoriesToArticles
+            li.themes__item
+              a.themes__item-link(href='#') #{categories.name}
+                sup #{categories.count}
+      .main-page__section-flex
+        section.main-page__hot.hot
+          h2.hot__name
+            | Самое обсуждаемое
+            span.hot__icon.hot__icon--fire
+          if sortedArticles
+            ul.hot__list
+              each article in sortedArticles
+                li.hot__list-item
+                  a.hot__list-link(href=`/articles/${article.id}`) #{article.title}
+                    sup.hot__link-sup #{article.comments.length}
+          else
+            p.hot__empty Здесь пока ничего нет...
+        section.main-page__last.last
+          h2.last__name
+            | Последние комментарии
+            span.last__icon.last__icon--cloud
+          if lastCommentedArticles
+            ul.last__list
+              each article in lastCommentedArticles
+                li.last__list-item
+                  img.last__list-image(src='img/avatar-small-1.png', width='20', height='20', alt='Аватар пользователя')
+                  b.last__list-name #{article.comments[article.comments.length - 1].user.name}
+                  a.last__list-link(href=`/articles/${article.id}`) #{article.comments[article.comments.length - 1].name}
+          else
+            p.last__empty Здесь пока ничего нет...
+      section.main-page__list.preview
+        h2.visually-hidden Список превью статей
+        ul.preview__list
+          each article in articles
+            li(class=`preview__item ${article.picture ? '' : 'preview__item--noImage'}`)
+              ul.preview__breadcrumbs
+                each category in article.categories
+                  li.preview__breadcrumbs-item
+                    a.preview__breadcrumbs-link(href='#') #{category.name}
+              .preview__background
+                img.preview__background-image(src=`/img/${article.picture}`, width='460', height='240', alt='Картинка поста')
+              time.preview__time(datetime=`${article.createdAt}`) #{article.createdAt}
+              h3.preview__name
+                a.preview__name-link(href='#') #{article.title}
+              p.preview__text #{article.announce}
+              if article.comments.length
+                a.preview__comment(href=`/articles/${article.id}`)
+                  | Комментарии
+                  span.preview__cloud
+                  |
+                  b.preview__comment-count #{article.comments.length}
+      +pagination(page, totalPages, 2, `?`)
+    else
+      .main-page__empty-wrapper
+        p.main-page__empty-text Здесь пока пусто!

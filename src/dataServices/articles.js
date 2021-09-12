@@ -95,7 +95,19 @@ class ArticlesService {
   async findPage({limit, offset, comments}) {
     const include = [Alias.CATEGORIES];
     if (comments) {
-      include.push(Alias.COMMENTS);
+      include.push({
+        model: this._Comment,
+        as: Alias.COMMENTS,
+        include: [
+          {
+            model: this._User,
+            as: Alias.USER,
+            attributes: {
+              exclude: [`passwordHash`]
+            }
+          }
+        ]
+      });
     }
 
     const {count, rows} = await this._Article.findAndCountAll({
