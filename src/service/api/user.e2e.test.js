@@ -12,7 +12,8 @@ const {
   mockCategories,
   validArticles,
   users,
-  validUser
+  validUser,
+  invalidUser
 } = require(`./test_mocks`);
 
 const createAPI = async () => {
@@ -38,6 +39,19 @@ describe(`User API end-points`, () => {
     });
 
     test(`Status code 201`, () => expect(response.statusCode).toBe(HTTP_CODES.CREATED));
+  });
+
+  describe(`Creating new user with owner rights, response code should be 401`, () => {
+    let response;
+
+    beforeAll(async () => {
+      let app = await createAPI();
+      response = await request(app)
+        .post(`/user`)
+        .send(invalidUser);
+    });
+
+    test(`Status code 401`, () => expect(response.statusCode).toBe(HTTP_CODES.BAD_REQUEST));
   });
 
   describe(`API refuses to create user if data is invalid`, () => {

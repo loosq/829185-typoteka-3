@@ -337,4 +337,14 @@ const handleNewArticleButtonClick = function() {
   }
 }
 
+// Обработчик на кнопку "Войти" в секции комментарии у поста
+const handleLoginButtonClick = function() {
+  const joinButton = document.querySelector(`.button--login`)
+  if (joinButton) {
+    const loginUrl = `/login`;
+    joinButton.addEventListener(`click`, () => document.location = loginUrl);
+  }
+}
+
+handleLoginButtonClick();
 handleNewArticleButtonClick();

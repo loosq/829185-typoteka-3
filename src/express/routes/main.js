@@ -5,9 +5,9 @@ const mainRouter = new Router();
 const {mostPopularArticles} = require(`../../service/utils`);
 const api = require(`../api`).getAPI();
 const upload = require(`../middlewares/upload`);
-
 const ARTICLES_PER_PAGE = 4;
 const MAX_COMMENTED_ARTICLES = 3;
+const moment = require(`moment`);
 
 mainRouter.get(`/`, async (req, res) => {
   // получаем номер страницы
@@ -22,13 +22,23 @@ mainRouter.get(`/`, async (req, res) => {
     api.getArticles({limit, offset, comments: true}),
     api.getCategories(true)
   ]);
+
   // TODO запросы для самых популярных и наиболее комментируемых статей перенести на вебсокеты
   const sortedArticles = mostPopularArticles(articles);
   const lastCommentedArticles = sortedArticles.slice(0, MAX_COMMENTED_ARTICLES);
   const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
   const {user} = req.session;
 
-  res.render(`main`, {articles, categoriesToArticles, lastCommentedArticles, sortedArticles, page, totalPages, user});
+  res.render(`main`, {
+    articles,
+    categoriesToArticles,
+    lastCommentedArticles,
+    sortedArticles,
+    page,
+    totalPages,
+    user,
+    moment
+  });
 });
 mainRouter.get(`/search`, async (req, res) => {
 

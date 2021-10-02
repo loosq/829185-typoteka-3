@@ -17,6 +17,7 @@ const USERS = [
     passwordHash: `5f4dcc3b5aa765d61d8327deb882cf99`,
     firstName: `Иван`,
     lastName: `Иванов`,
+    isBlogOwner: true,
     avatar: `avatar1.jpg`
   },
   {
@@ -24,6 +25,7 @@ const USERS = [
     passwordHash: `5f4dcc3b5aa765d61d8327deb882cf99`,
     firstName: `Пётр`,
     lastName: `Петров`,
+    isBlogOwner: false,
     avatar: `avatar2.jpg`
   }
 ];

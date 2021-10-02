@@ -9,7 +9,8 @@ const ErrorRegisterMessage = {
   EMAIL_EXIST: `Электронный адрес уже используется`,
   PASSWORD: `Пароль содержит меньше 6-ти символов`,
   PASSWORD_REPEATED: `Пароли не совпадают`,
-  AVATAR: `Изображение не выбрано или тип изображения не поддерживается`
+  AVATAR: `Изображение не выбрано или тип изображения не поддерживается`,
+  SECOND_BLOG_OWNER: `Владелец блога уже сущесвует`
 };
 
 const schema = Joi.object({
@@ -25,6 +26,7 @@ const schema = Joi.object({
   passwordRepeated: Joi.string().required().valid(Joi.ref(`password`)).required().messages({
     'any.only': ErrorRegisterMessage.PASSWORD_REPEATED
   }),
+  isBlogOwner: Joi.bool().required(),
   avatar: Joi.string().required().messages({
     'string.empty': ErrorRegisterMessage.AVATAR
   })
@@ -33,6 +35,15 @@ const schema = Joi.object({
 module.exports = (service) => async (req, res, next) => {
   const newUser = req.body;
   const {error} = schema.validate(newUser);
+
+  if (newUser.isBlogOwner) {
+    const haveBlogOwner = await service.findBlogOwner();
+
+    if (haveBlogOwner && haveBlogOwner.id) {
+      res.status(HTTP_CODES.BAD_REQUEST)
+        .send(ErrorRegisterMessage.SECOND_BLOG_OWNER);
+    }
+  }
 
   if (error) {
     return res.status(HTTP_CODES.BAD_REQUEST)

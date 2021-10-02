@@ -20,6 +20,7 @@ const storage = multer.diskStorage({
 const upload = multer({storage});
 const csrf = require(`csurf`);
 const csrfProtection = csrf();
+const moment = require(`moment`);
 
 articlesRouter.get(`/categories/:id`, (req, res) => res.send(`/category/:id ${req.params.id}`));
 articlesRouter.get(`/add`, auth, csrfProtection, async (req, res) => {
@@ -62,7 +63,7 @@ articlesRouter.get(`/:id`, async (req, res) => {
   const article = await api.getArticle(req.params.id, true);
   const {error} = req.query;
   const {user} = req.session;
-  res.render(`articles/article`, {article, error, user});
+  res.render(`articles/article`, {article, error, user, moment});
 });
 
 articlesRouter.post(`/:id/comments`, auth, async (req, res) => {

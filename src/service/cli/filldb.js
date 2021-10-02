@@ -50,7 +50,7 @@ const generateArticles = (options) => {
     categories: getRandomSubarray(categories),
     comments: Array(getRandomInt(1, MAXIMUM_COMMENTS)).fill({}).map(() => ({
       user: users[getRandomInt(0, users.length - 1)].email,
-      name: shuffle(comments).slice(0, getRandomInt(0, comments.length - 1)).join(` `)
+      name: shuffle(comments).slice(0, getRandomInt(1, comments.length - 1)).join(` `)
     }))
   }));
 };
@@ -81,12 +81,14 @@ module.exports = {
           name: `Иван Иванов`,
           email: `ivanov@example.com`,
           passwordHash: await passwordUtils.hash(`ivanov`),
+          isBlogOwner: true,
           avatar: `avatar-1.png`
         },
         {
           name: `Пётр Петров`,
           email: `petrov@example.com`,
           passwordHash: await passwordUtils.hash(`petrov`),
+          isBlogOwner: false,
           avatar: `avatar-2.png`
         }
       ];

@@ -7,12 +7,14 @@ const users = [
     name: `Иван Иванов`,
     email: `ivanov@example.com`,
     passwordHash: `$2b$10$lZ2QE6F48S/c5eLmR32M6OLZkRzYAVo/B3OM4goD/N1Js5lrt5SRS`,
+    isBlogOwner: true,
     avatar: `avatar-1.png`
   },
   {
     name: `Пётр Петров`,
     email: `petrov@example.com`,
     passwordHash: `petrov`,
+    isBlogOwner: false,
     avatar: `avatar-2.png`
   }
 ];
@@ -198,6 +200,7 @@ const invalidArticleAttr = {
 };
 
 const validComment = {
+  userId: 1,
   name: `Очень смешной комментарий`
 };
 
@@ -223,7 +226,17 @@ const validUser = {
   email: `sidorov@example.com`,
   password: `sidorov`,
   passwordRepeated: `sidorov`,
+  isBlogOwner: false,
   avatar: `sidorov.jpg`
+};
+
+const invalidUser = {
+  name: `odmen odmenovich`,
+  email: `odmen@odmen.com`,
+  password: `odmen`,
+  passwordRepeated: `odmen`,
+  isBlogOwner: true,
+  avatar: `odmen.jpg`
 };
 
 module.exports = {
@@ -237,5 +250,6 @@ module.exports = {
   emptyComment,
   mockCategories,
   users,
-  validUser
+  validUser,
+  invalidUser
 };

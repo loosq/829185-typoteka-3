@@ -11,7 +11,8 @@
     "lint::fix": "eslint --fix --ext .js src/",
     "start.dev": "nodemon -r dotenv/config ./src/service/service.js --server",
     "start-front-server": "nodemon -r dotenv/config ./src/express/express.js",
-    "start-servers": "concurrently \"npm run start-back-server\" \"npm run start-front-server\""
+    "start-servers": "concurrently \"npm run start-back-server\" \"npm run start-front-server\"",
+    "filldb": "node -r dotenv/config ./src/service/service.js --filldb 10"
   },
   "repository": {
     "type": "git",
@@ -43,6 +44,7 @@
     "express": "4.17.1",
     "express-session": "1.17.2",
     "joi": "17.4.2",
+    "moment": "^2.29.1",
     "multer": "1.4.2",
     "nanoid": "3.1.22",
     "pg": "8.7.1",

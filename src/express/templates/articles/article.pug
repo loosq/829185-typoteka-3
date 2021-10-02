@@ -24,18 +24,18 @@ block content
             p #{article.fullText}
       .post__wrapper.post__wrapper--comments
         section.post__comments.comments
-          h2.comments__title.title.title--middle Комментарии
-          ul.comments__list
-            each comment in article.comments
-              li.comments__comment
-                .comments__avatar.avatar
-                  img(src=`/img/${comment.user.avatar}`, alt='аватар пользователя')
-                .comments__text
-                  .comments__head
-                    p #{comment.user.name}
-                    time.comments__date(datetime=`${comment.createdAt}`) #{comment.createdAt}
-                  p.comments__message #{comment.name}
+          h2.comments__title.title.title--middle Комментарии #{article.comments ? '' : 'отсутствуют'}
           if user
+            ul.comments__list
+              each comment in article.comments
+                li.comments__comment
+                  .comments__avatar.avatar
+                    img(src=`/img/${comment.user.avatar}`, alt='аватар пользователя')
+                  .comments__text
+                    .comments__head
+                      p #{comment.user.name} •
+                      time.comments__date(datetime=`${moment(comment.createdAt).format('DD.MM.YYYY')}`) #{moment(comment.createdAt).format('DD.MM.YYYY')}
+                    p.comments__message #{comment.name}
             .comments__footer.comments__footer--user
               form(action=`/articles/${article.id}/comments`, method='POST')
                 .comments__avatar.avatar
@@ -44,3 +44,10 @@ block content
                   textarea(rows='1', name='text', placeholder='Присоединиться к обсуждению')
                 button.comments__button.button.button--colored(type='submit') Опубликовать
               +errorMessage(error)
+          else
+            .comments__footer.comments__footer--visitor
+              button.comments__button.button.button--colored.button--login(type='submit') Войти
+              .comments__registration
+                p.text.text--signature
+                  b.title.title--small Регистрация
+                  | Чтобы присоединиться к переписке нужно зарегистрироваться

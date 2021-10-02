@@ -16,6 +16,14 @@ class UserService {
     });
     return user && user.get();
   }
+
+  async findBlogOwner() {
+    const user = await this._User.findOne({
+      where: {isBlogOwner: true}
+    });
+
+    return user && user.get();
+  }
 }
 
 module.exports = UserService;
