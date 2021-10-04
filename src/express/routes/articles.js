@@ -26,7 +26,7 @@ articlesRouter.get(`/categories/:id`, (req, res) => res.send(`/category/:id ${re
 articlesRouter.get(`/add`, auth, csrfProtection, async (req, res) => {
   const {error} = req.query;
   const categories = await api.getCategories();
-  const user = req.session;
+  const {user} = req.session;
 
   res.render(`articles/article-add-empty`, {categories, error, user, csrfToken: req.csrfToken()});
 });
@@ -37,13 +37,15 @@ articlesRouter.post(`/add`,
     async (req, res) => {
       const {body, file} = req;
       const {title, announcement, categories, fullText} = body;
+      const {user} = req.session;
 
       const article = {
+        user,
         title,
         picture: file && file.filename,
         announce: announcement,
         fullText,
-        categories
+        categories: Array.isArray(categories) ? categories : [categories]
       };
 
       try {
@@ -55,7 +57,7 @@ articlesRouter.post(`/add`,
     });
 articlesRouter.get(`/edit/:id`, auth, csrfProtection, async (req, res) => {
   const article = await api.getArticle(req.params.id);
-  const user = req.session;
+  const {user} = req.session;
 
   res.render(`articles/article-add`, {article, user, csrfToken: req.csrfToken()});
 });

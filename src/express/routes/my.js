@@ -15,7 +15,6 @@ myRouter.get(`/comments`, auth, async (req, res) => {
   const articles = await api.getArticles();
   const user = req.session;
 
-  // TODO Разобраться какйо контент тут отображать
   res.render(`my/my-comments`, {articles, user});
 });
 

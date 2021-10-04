@@ -1,5 +1,6 @@
 'use strict';
 
+const logger = require(`../../logger/logger`).getLogger({name: `DATABASE`});
 const Sequelize = require(`sequelize`);
 const {
   DB_NAME,
@@ -21,6 +22,8 @@ module.exports = new Sequelize(
       port: DB_PORT,
       // указываем, с какой СУБД предстоит работать
       dialect: `postgres`,
+      // кастомный логгер
+      logging: (msg) => logger.debug(msg),
       // настройки пула соединений
       pool: {
         max: 5,

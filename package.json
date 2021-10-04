@@ -4,14 +4,15 @@
   "description": "Типотека",
   "main": "./src/service/service.js",
   "scripts": {
-    "start-back-server": "cross-env LOG_LEVEL=error node -r dotenv/config ./src/service/service.js > ./src/service/logs/app.log 2> ./src/service/logs/error.log --server",
-    "start-back-server::debug": "cross-env LOG_LEVEL=info NODE_ENV=development node -r dotenv/config ./src/service/service.js > ./src/service/logs/app.log 2> ./src/service/logs/error.log --server",
+    "start-dev-back-server": "cross-env LOG_LEVEL=debug NODE_ENV=development nodemon -r dotenv/config ./src/service/service.js --server",
+    "start-dev-front-server": "cross-env LOG_LEVEL=debug NODE_ENV=development nodemon -r dotenv/config ./src/express/express.js",
+    "start-servers::debug": "concurrently \"npm run start-dev-back-server\" \"npm run start-dev-front-server\"",
+    "start-prod-back-server": "cross-env LOG_LEVEL=error node -r dotenv/config ./src/service/service.js > ./src/service/logs/app.log 2> ./src/service/logs/error.log --server",
+    "start-prod-front-server": "cross-env LOG_LEVEL=error node -r dotenv/config ./src/service/service.js > ./src/express/logs/app.log 2> ./src/express/logs/error.log ./src/express/express.js",
+    "start-servers": "concurrently \"npm run start-prod-back-server\" \"npm run start-prod-front-server\"",
     "test::rest": "jest",
     "lint": "eslint --ext .js src/",
     "lint::fix": "eslint --fix --ext .js src/",
-    "start.dev": "nodemon -r dotenv/config ./src/service/service.js --server",
-    "start-front-server": "nodemon -r dotenv/config ./src/express/express.js",
-    "start-servers": "concurrently \"npm run start-back-server\" \"npm run start-front-server\"",
     "filldb": "node -r dotenv/config ./src/service/service.js --filldb 10"
   },
   "repository": {
@@ -48,7 +49,7 @@
     "multer": "1.4.2",
     "nanoid": "3.1.22",
     "pg": "8.7.1",
-    "pino": "6.11.3",
+    "pino": "6.13.3",
     "pino-pretty": "6.0.0",
     "pug": "3.0.2",
     "sequelize": "6.6.5"

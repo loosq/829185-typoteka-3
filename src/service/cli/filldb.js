@@ -54,7 +54,7 @@ const generateArticles = (options) => {
     }))
   }));
 };
-const logger = getLogger();
+const logger = getLogger({module: `fill db`});
 
 module.exports = {
   name: `--filldb`,

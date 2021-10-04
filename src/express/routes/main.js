@@ -10,7 +10,6 @@ const MAX_COMMENTED_ARTICLES = 3;
 const moment = require(`moment`);
 
 mainRouter.get(`/`, async (req, res) => {
-  // получаем номер страницы
   let {page = 1} = req.query;
   page = +page;
   const limit = ARTICLES_PER_PAGE;
@@ -41,16 +40,18 @@ mainRouter.get(`/`, async (req, res) => {
   });
 });
 mainRouter.get(`/search`, async (req, res) => {
+  const {user} = req.session;
 
   try {
     const {search} = req.query;
     const results = await api.search(search) || [];
     res.render(`search/search-${results.length ? `results` : `nothing`}`, {
       results,
-      search
+      search,
+      user
     });
   } catch (error) {
-    res.render(`search/search-empty`);
+    res.render(`search/search-empty`, {user});
   }
 });
 mainRouter.get(`/comments`, async (req, res) => {
@@ -80,6 +81,11 @@ mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
 });
 mainRouter.get(`/login`, (req, res) => {
   const {error} = req.query;
+  const {user} = req.session;
+
+  if (user) {
+    res.redirect(`/`);
+  }
 
   res.render(`auth/login`, {error});
 });

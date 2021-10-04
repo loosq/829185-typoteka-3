@@ -5,7 +5,7 @@ const DEFAULT_SERVER_PORT = 3000;
 const express = require(`express`);
 const app = express();
 const {getLogger} = require(`../../logger/logger`);
-const logger = getLogger();
+const logger = getLogger({name: `API`});
 const sequelize = require(`../../service/lib/sequelize`);
 const apiRoutes = require(`../api`);
 
@@ -28,7 +28,10 @@ module.exports = {
     logger.info(`Connection to database established`);
 
     app.use((req, res, next) => {
-      logger.debug(`Start request to url ${req.url}`);
+      const {method, query, params, body} = req;
+      logger.info(`Start request to url ${req.url}`);
+      logger.debug({method, query, params, body});
+
       res.on(`finish`, () => {
         logger.info(`Response status code ${req.statusCode}`);
       });
