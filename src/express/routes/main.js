@@ -2,11 +2,12 @@
 
 const {Router} = require(`express`);
 const mainRouter = new Router();
-const {mostPopularArticles} = require(`../../service/utils`);
+const {mostPopularArticles, lastComments} = require(`../../service/utils`);
 const api = require(`../api`).getAPI();
 const upload = require(`../middlewares/upload`);
 const ARTICLES_PER_PAGE = 4;
 const MAX_COMMENTED_ARTICLES = 3;
+const MOST_POPULAR_ARTICLES = 4;
 const moment = require(`moment`);
 
 mainRouter.get(`/`, async (req, res) => {
@@ -16,23 +17,25 @@ mainRouter.get(`/`, async (req, res) => {
   const offset = (page - 1) * ARTICLES_PER_PAGE;
   const [
     {count, articles},
+    allArticles,
     categoriesToArticles
   ] = await Promise.all([
     api.getArticles({limit, offset, comments: true}),
+    api.getArticles({comments: true}),
     api.getCategories(true)
   ]);
 
   // TODO запросы для самых популярных и наиболее комментируемых статей перенести на вебсокеты
-  const sortedArticles = mostPopularArticles(articles);
-  const lastCommentedArticles = sortedArticles.slice(0, MAX_COMMENTED_ARTICLES);
+  const popularArticles = mostPopularArticles(allArticles);
+  const lastCommentedArticles = lastComments(allArticles);
   const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
   const {user} = req.session;
 
   res.render(`main`, {
     articles,
     categoriesToArticles,
-    lastCommentedArticles,
-    sortedArticles,
+    lastCommentedArticles: lastCommentedArticles.slice(0, MAX_COMMENTED_ARTICLES),
+    popularArticles: popularArticles.slice(0, MOST_POPULAR_ARTICLES),
     page,
     totalPages,
     user,
@@ -66,9 +69,10 @@ mainRouter.get(`/register`, (req, res) => {
 mainRouter.post(`/register`, upload.single(`avatar`), async (req, res) => {
   const {body, file} = req;
   const userData = {
-    avatar: file && file.filename,
+    avatar: (file && file.filename) || null,
     name: `${body[`name`]} ${body[`surname`]}`,
     email: body[`email`],
+    isBlogOwner: false,
     password: body[`password`],
     passwordRepeated: body[`repeat-password`]
   };

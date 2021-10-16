@@ -67,7 +67,6 @@ articlesRouter.get(`/:id`, async (req, res) => {
   const {user} = req.session;
   res.render(`articles/article`, {article, error, user, moment});
 });
-
 articlesRouter.post(`/:id/comments`, auth, async (req, res) => {
   const {id} = req.params;
   const {text} = req.body;

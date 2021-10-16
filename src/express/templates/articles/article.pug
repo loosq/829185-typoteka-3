@@ -9,7 +9,7 @@ block content
         .post__wrapper
           .post__head
             a.post__backwards.button.button--backwards(href="javascript:history.go(-1)") Назад
-            time.post__date(datetime=`${article.createdAt}`) #{article.createdAt}
+            time.post__date(datetime=`${article.createdAt}`) #{moment(article.createdAt).format('DD.MM.YYYY')}
             h2.post__title.title.title--main #{article.title}
             ul.post__themes.themes
               each category in article.categories

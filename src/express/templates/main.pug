@@ -6,7 +6,7 @@ block content
     p.
 
       Это приветственный текст, который владелец блога может выбрать, чтобы описать себя 👏
-    if articles
+    if articles && articles.length
       section.main-page__theme-list
         h2.visually-hidden Список тем
         ul.themes
@@ -19,9 +19,9 @@ block content
           h2.hot__name
             | Самое обсуждаемое
             span.hot__icon.hot__icon--fire
-          if sortedArticles
+          if popularArticles
             ul.hot__list
-              each article in sortedArticles
+              each article in popularArticles
                 li.hot__list-item
                   a.hot__list-link(href=`/articles/${article.id}`) #{article.title}
                     sup.hot__link-sup #{article.comments.length}
@@ -33,11 +33,11 @@ block content
             span.last__icon.last__icon--cloud
           if lastCommentedArticles
             ul.last__list
-              each article in lastCommentedArticles
+              each comment in lastCommentedArticles
                 li.last__list-item
                   img.last__list-image(src='img/avatar-small-1.png', width='20', height='20', alt='Аватар пользователя')
-                  b.last__list-name #{article.comments[article.comments.length - 1].user.name}
-                  a.last__list-link(href=`/articles/${article.id}`) #{article.comments[article.comments.length - 1].name}
+                  b.last__list-name #{comment.user.name}
+                  a.last__list-link(href=`/articles/${comment.articleId}`) #{truncate(comment.name)}
           else
             p.last__empty Здесь пока ничего нет...
       section.main-page__list.preview

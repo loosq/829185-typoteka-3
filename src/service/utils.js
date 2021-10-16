@@ -57,7 +57,13 @@ const getMocks = async (fileName) => {
   }
 };
 
-const mostPopularArticles = (articles) => Array.isArray(articles) && articles.sort((a, b) => b.comments.length - a.comments.length);
+const mostPopularArticles = (articles) => articles.sort((a, b) => b.comments.length - a.comments.length);
+
+const lastComments = (articles) => {
+  let allComments = [];
+  articles.forEach((article) => article.comments.forEach((comment) => allComments.push({...comment, articleId: article.id})));
+  return allComments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+};
 
 const getPictureFileName = (count) => `item${count < 10 ? `0${count}` : count}.jpg`;
 
@@ -84,5 +90,6 @@ module.exports = {
   getCurrentDate,
   mostPopularArticles,
   getPictureFileName,
-  getRandomSubarray
+  getRandomSubarray,
+  lastComments
 };

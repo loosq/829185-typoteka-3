@@ -3,6 +3,7 @@
 const Joi = require(`joi`);
 const {HTTP_CODES} = require(`../service/constants`);
 
+const errorEmptyKeyMessage = (text) => `Поле ${text} обязательно для заполнения`;
 const ErrorRegisterMessage = {
   NAME: `Имя содержит некорректные символы`,
   EMAIL: `Некорректный электронный адрес`,
@@ -10,24 +11,29 @@ const ErrorRegisterMessage = {
   PASSWORD: `Пароль содержит меньше 6-ти символов`,
   PASSWORD_REPEATED: `Пароли не совпадают`,
   AVATAR: `Изображение не выбрано или тип изображения не поддерживается`,
-  SECOND_BLOG_OWNER: `Владелец блога уже сущесвует`
+  SECOND_BLOG_OWNER: `Владелец блога уже сущесвует`,
+  NO_AVATAR: `Загрузите аватар`
 };
 
 const schema = Joi.object({
   name: Joi.string().pattern(/[^0-9$&+,:;=?@#|'<>.^*()%!]+$/).required().messages({
+    'any.required': errorEmptyKeyMessage(`name`),
     'string.pattern.base': ErrorRegisterMessage.NAME
   }),
   email: Joi.string().email().required().messages({
+    'any.required': errorEmptyKeyMessage(`email`),
     'string.email': ErrorRegisterMessage.EMAIL
   }),
   password: Joi.string().min(6).required().messages({
+    'any.required': errorEmptyKeyMessage(`password`),
     'string.min': ErrorRegisterMessage.PASSWORD
   }),
   passwordRepeated: Joi.string().required().valid(Joi.ref(`password`)).required().messages({
+    'any.required': errorEmptyKeyMessage(`passwordRepeated`),
     'any.only': ErrorRegisterMessage.PASSWORD_REPEATED
   }),
   isBlogOwner: Joi.bool().required(),
-  avatar: Joi.string().required().messages({
+  avatar: Joi.string().optional().allow(null).messages({
     'string.empty': ErrorRegisterMessage.AVATAR
   })
 });
